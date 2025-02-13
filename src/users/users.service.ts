@@ -1,29 +1,100 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>) {}
 
-  async create({ balance, email, name, password }: CreateUserDto): Promise<User> {}
+  async create({ balance, email, name, password }: CreateUserDto): Promise<User> {
+    try {
+      const findUser = await this.usersRepository.findOne({ where: { email } });
+      if (findUser) throw new BadRequestException('User already exists');
 
-  async findAll(): Promise<User[]> {
-    return `This action returns all users`;
+      const user = new User(balance, email, name);
+      await user.setPassword(password);
+
+      return await this.usersRepository.save(user);
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error;
+
+      throw new InternalServerErrorException('Unexpected server error to create a new user');
+    }
   }
 
-  async findOne(id: number): Promise<User> {
-    return `This action returns a #${id} user`;
+  async findAll(page: number, limit: number): Promise<PaginatedListDto<User[]>> {
+    try {
+      const [users, total] = await this.usersRepository.findAndCount({
+        take: limit,
+        skip: (page - 1) * limit,
+      });
+
+      return {
+        data: users,
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
+      };
+    } catch {
+      throw new InternalServerErrorException('Internal server error finding movies');
+    }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<void> {
-    return `This action updates a #${id} user`;
+  async findOne(id: string): Promise<User> {
+    try {
+      const user = await this.usersRepository.findOne({ where: { id } });
+
+      if (!user) throw new NotFoundException('UserId does not exists');
+
+      return user;
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
+      throw new InternalServerErrorException('Unexpected server error to find user');
+    }
   }
 
-  async remove(id: number): Promise<void> {
-    return `This action removes a #${id} user`;
+  async update(id: string, { balance, name, password, isActive }: UpdateUserDto): Promise<void> {
+    try {
+      const user = await this.usersRepository.findOne({ where: { id } });
+      if (!user) throw new NotFoundException('UserId does not exist');
+  
+      if (name !== undefined) user.name = name;
+      if (balance !== undefined) user.balance = balance;
+      if (password !== undefined) user.setPassword(password);
+      if (isActive !== undefined) user.setIsActive(isActive);
+  
+      user.setUpdatedAt();
+  
+      await this.usersRepository.save(user); 
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) throw error;
+  
+      throw new InternalServerErrorException('Unexpected server error to update user');
+    }
+  }
+
+
+  async remove(id: string): Promise<void> {
+    try {
+      const user = await this.usersRepository.findOne({ where: { id } });
+
+      if (!user) throw new NotFoundException('UserId does not exists');
+
+      await this.usersRepository.delete(id);
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) throw error;
+
+      throw new InternalServerErrorException('Unexpected server error to delete user');
+    }
   }
 }
