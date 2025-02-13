@@ -5,7 +5,7 @@ import { Column } from 'typeorm';
 
 export abstract class BaseIsActive extends BaseEntity {
   @ApiProperty()
-  @Column()
+  @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
   constructor() {

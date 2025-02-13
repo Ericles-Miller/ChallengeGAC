@@ -4,24 +4,23 @@ import { Column, Entity } from 'typeorm';
 import { hash } from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 
-@Entity({ name: 'users' })
+@Entity('users')
 export class User extends BaseIsActive {
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   @ApiProperty()
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255, unique: true })
   @ApiProperty()
   email: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 40 })
   @ApiProperty()
   @Exclude()
   password: string;
 
-  @Column()
+  @Column({ type: 'float' })
   @ApiProperty()
-  @Exclude()
   balance: number;
 
   constructor(balance: number, email: string, name: string) {
