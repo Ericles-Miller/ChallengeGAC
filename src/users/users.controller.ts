@@ -86,6 +86,8 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
+
+  
   async findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
@@ -134,13 +136,14 @@ export class UsersController {
   @ApiOperation({
     summary: 'Update user',
     description: `
-    sample request: update user 
+    sample request: update all properties user. Obs: All of properties are optionals
     PATCH /users/8abcb8a5-9709-41c7-85df-08a44fd1c6f4/
     REQUEST BODY: 
     {
-      name: "John Doe",
-      password: "********",
-      isActive: true
+      "name": "John Doe",
+      "password": "********",
+      "isActive": true,
+      "balance": 5000,
     }
     `,
   })

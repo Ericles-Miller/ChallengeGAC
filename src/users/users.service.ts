@@ -66,30 +66,29 @@ export class UsersService {
   async update(id: string, { balance, name, password, isActive }: UpdateUserDto): Promise<void> {
     try {
       const user = await this.usersRepository.findOne({ where: { id } });
-      if (!user) throw new NotFoundException('UserId does not exists');
-
-      user.name = name;
-      user.balance = balance;
-      user.setPassword(password);
-      user.setUpdatedAt();
-
+      if (!user) throw new NotFoundException('UserId does not exist');
+  
+      if (name !== undefined) user.name = name;
+      if (balance !== undefined) user.balance = balance;
+      if (password !== undefined) user.setPassword(password);
       if (isActive !== undefined) user.setIsActive(isActive);
-
-      await this.usersRepository.update(id, user);
+  
+      user.setUpdatedAt();
+  
+      await this.usersRepository.save(user); 
     } catch (error) {
-      if (error instanceof NotFoundException) throw error;
-
+      if (error instanceof NotFoundException || error instanceof BadRequestException) throw error;
+  
       throw new InternalServerErrorException('Unexpected server error to update user');
     }
   }
+
 
   async remove(id: string): Promise<void> {
     try {
       const user = await this.usersRepository.findOne({ where: { id } });
 
       if (!user) throw new NotFoundException('UserId does not exists');
-
-      if (user.balance > 0) throw new BadRequestException('User has a balance');
 
       await this.usersRepository.delete(id);
     } catch (error) {
