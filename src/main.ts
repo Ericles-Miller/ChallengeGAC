@@ -18,6 +18,16 @@ async function bootstrap() {
     .setTitle('Suit Docs Challenge Adriano Cobbucio')
     .setDescription('')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'sessionAuth',
+    )
     .addTag('')
     .build();
 

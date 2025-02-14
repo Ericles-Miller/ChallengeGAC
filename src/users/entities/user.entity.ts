@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseIsActive } from 'src/shared/Entities/BaseIsActive';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, UpdateDateColumn } from 'typeorm';
 import { hash } from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 
@@ -22,6 +22,13 @@ export class User extends BaseIsActive {
   @Column({ type: 'float' })
   @ApiProperty()
   balance: number;
+
+  @Column({ type: 'varchar', length: 255 })
+  @ApiProperty()
+  refreshTokenCode: string;
+
+  @UpdateDateColumn({ type: 'timestamptz', nullable: true })
+  lastLogin?: Date;
 
   constructor(balance: number, email: string, name: string) {
     super();

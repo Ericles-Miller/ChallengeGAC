@@ -12,7 +12,6 @@ export class CreateUserTable1739475249074 implements MigrationInterface {
               "isActive" boolean NOT NULL DEFAULT true,
               "createdAt" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
               "updatedAt" timestamptz,
-              "lastLogin" timestamptz,
               "refreshTokenCode" varchar(255),
               CONSTRAINT "UQ_users_email" UNIQUE ("email")
             );

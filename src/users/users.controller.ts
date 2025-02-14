@@ -9,13 +9,15 @@ import {
   Query,
   UseInterceptors,
   ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
+import { JwtAuthGuard } from 'src/auth/Jwt-auth-guard';
 
 @Controller('users')
 @ApiTags('users')
@@ -86,8 +88,6 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
-
-  
   async findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
@@ -99,6 +99,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiBearerAuth('sessionAuth')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
     summary: 'find users with id',
@@ -129,6 +131,8 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth('sessionAuth')
+  @UseGuards(JwtAuthGuard)
   @ApiBody({
     type: UpdateUserDto,
     required: true,
@@ -172,6 +176,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('sessionAuth')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Delete user',
     description: `
