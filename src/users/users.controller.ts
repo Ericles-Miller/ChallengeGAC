@@ -133,6 +133,7 @@ export class UsersController {
   @Patch(':id')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiBody({
     type: UpdateUserDto,
     required: true,
@@ -178,6 +179,7 @@ export class UsersController {
   @Delete(':id')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
     summary: 'Delete user',
     description: `

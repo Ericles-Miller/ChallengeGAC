@@ -12,7 +12,6 @@ import { Repository } from 'typeorm/repository/Repository';
 import { compare } from 'bcryptjs';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.Dto';
-import 'dotenv/config';
 
 @Injectable()
 export class AuthService {
@@ -108,9 +107,5 @@ export class AuthService {
 
       throw new InternalServerErrorException('Uneexpected server error to logout');
     }
-  }
-
-  validateUser(userId: string): Promise<User> {
-    return this.usersRepository.findOne({ where: { id: userId } });
   }
 }
