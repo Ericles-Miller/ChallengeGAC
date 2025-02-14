@@ -2,6 +2,7 @@ import { LoggerService } from './logger.service';
 import { CustomLogger } from './custom-logger';
 import { Request, Response, NextFunction } from 'express';
 import { LoggerMiddleware } from './loggers-middleware';
+import { ELoggerLevel } from './logger-level.enum';
 
 describe('LoggerMiddleware', () => {
   let middleware: LoggerMiddleware;
@@ -52,8 +53,8 @@ describe('LoggerMiddleware', () => {
       '/test',
       200,
       '127.0.0.1',
+      ELoggerLevel.INFO,
       expect.any(Number),
-      '123',
     );
 
     expect(mockCustomLogger.log).toHaveBeenCalledWith(expect.stringContaining('GET /test 200'), 'HTTP');
