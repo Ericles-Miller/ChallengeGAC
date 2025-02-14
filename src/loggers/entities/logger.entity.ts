@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { ELoggerLevel } from '../logger-level.enum';
 
-@Entity('loggers')
+@Entity('logs')
 export class Logger {
   @PrimaryGeneratedColumn('uuid')
   id: string;

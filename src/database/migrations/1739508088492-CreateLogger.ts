@@ -10,11 +10,10 @@ export class CreateLogger1739508088492 implements MigrationInterface {
         url VARCHAR NOT NULL,
         "statusCode" INT NOT NULL,
         timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "movieId" VARCHAR,
         ip VARCHAR NOT NULL,
-        level VARCHAR NOT NULL DEFAULT 'info' CHECK (level IN ('info', 'warn', 'error')),
+        level VARCHAR NOT NULL DEFAULT 'info' CHECK (level IN ('info', 'warn', 'error', 'debug', 'trace')),
         "timeRequest" INT NOT NULL,
-        "actionType" VARCHAR NOT NULL DEFAULT 'other' CHECK ("actionType" IN ('create', 'update', 'delete', 'other'))
+        "actionType" VARCHAR NOT NULL DEFAULT 'other' CHECK ("actionType" IN ('create', 'update', 'delete', 'list', 'other'))
       );
     `);
   }

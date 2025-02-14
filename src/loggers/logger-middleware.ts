@@ -18,7 +18,6 @@ export class LoggerMiddleware implements NestMiddleware {
 
     response.on('finish', () => {
       const { statusCode } = response;
-      const movieId = request.params.movieId;
       const timeRequest = differenceInMilliseconds(startTimeRequest, Date.now());
 
       const level =
@@ -28,27 +27,27 @@ export class LoggerMiddleware implements NestMiddleware {
 
       if (level === ELoggerLevel.ERROR) {
         this.customLogger.error(
-          `${method} ${originalUrl} ${statusCode}  TimeRequest ${timeRequest} mil - IP: ${ip} - Movie ID: ${movieId || 'N/A'}`,
+          `${method} ${originalUrl} ${statusCode}  TimeRequest ${timeRequest} mil - IP: ${ip}}`,
           'HTTP',
         );
       } else if (level === ELoggerLevel.WARN) {
         this.customLogger.warn(
-          `${method} ${originalUrl} ${statusCode} TimeRequest ${timeRequest} mil - IP: ${ip} - Movie ID: ${movieId || 'N/A'}`,
+          `${method} ${originalUrl} ${statusCode} TimeRequest ${timeRequest} mil - IP: ${ip} `,
           'HTTP',
         );
       } else if (level === ELoggerLevel.INFO) {
         this.customLogger.log(
-          `${method} ${originalUrl} ${statusCode} TimeRequest ${timeRequest} mil - IP: ${ip} - Movie ID: ${movieId || 'N/A'}`,
+          `${method} ${originalUrl} ${statusCode} TimeRequest ${timeRequest} mil - IP: ${ip}`,
           'HTTP',
         );
       } else if (level === ELoggerLevel.DEBUG) {
         this.customLogger.debug(
-          `${method} ${originalUrl} ${statusCode} TimeRequest ${timeRequest} mil - IP: ${ip} - Movie ID: ${movieId || 'N/A'}`,
+          `${method} ${originalUrl} ${statusCode} TimeRequest ${timeRequest} mil - IP: ${ip}`,
           'HTTP',
         );
       } else {
         this.customLogger.verbose(
-          `${method} ${originalUrl} ${statusCode} TimeRequest ${timeRequest} mil - IP: ${ip} - Movie ID: ${movieId || 'N/A'}`,
+          `${method} ${originalUrl} ${statusCode} TimeRequest ${timeRequest} mil - IP: ${ip} `,
           'HTTP',
         );
       }
