@@ -36,6 +36,7 @@
     "pino-prettier": "^3.0.1-dev",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20",
     "uuid": "^11.0.5"
   },

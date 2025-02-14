@@ -3,7 +3,7 @@ import { LoggerService } from './logger.service';
 import { LoggerModule } from 'nestjs-pino';
 import { CustomLogger } from './custom-logger';
 import { LoggerController } from './logger.controller';
-import { LoggerMiddleware } from './loggers-middleware';
+import { LoggerMiddleware } from './logger-middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Logger } from './entities/logger.entity';
 
