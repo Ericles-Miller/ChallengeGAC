@@ -1,35 +1,34 @@
-import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { RevokedToken } from './entities/revoked-token.entity';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(private readonly jwtService: JwtService) {
-    super();
-  }
+export class JwtAuthGuard implements CanActivate {
+  constructor(
+    private readonly jwtService: JwtService,
+    @InjectRepository(RevokedToken)
+    private readonly revokedTokenRepository: Repository<RevokedToken>,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
+    const token = authHeader?.split(' ')[1];
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Token not found or invalid');
-    }
+    return this.isTokenValid(token);
+  }
 
-    const token = authHeader.split(' ')[1];
+  private async isTokenValid(token: string): Promise<boolean> {
+    const isRevoked = await this.revokedTokenRepository.findOne({ where: { token } });
+    if (isRevoked) return false;
 
     try {
-      const payload = this.jwtService.verify(token);
-
-      request.user = {
-        userId: payload.userId,
-        username: payload.username,
-        email: payload.email,
-      };
-
-      return true;
+      const decoded = this.jwtService.verify(token, { secret: process.env.JWT_TOKEN_SECRET });
+      return !!decoded;
     } catch {
-      throw new UnauthorizedException('Invalid token');
+      return false;
     }
   }
 }

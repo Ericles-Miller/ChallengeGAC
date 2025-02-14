@@ -5,23 +5,25 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TokenAccessResponseDto } from './dto/token-acess-response.dto';
+import { TokenAccessDto } from './dto/token-acess.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm/repository/Repository';
 import { compare } from 'bcryptjs';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.Dto';
+import { RevokedToken } from './entities/revoked-token.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(RevokedToken) private readonly revokedTokenRepository: Repository<RevokedToken>,
 
     private readonly jwtService: JwtService,
   ) {}
 
-  async login({ email, password }: LoginUserDto): Promise<TokenAccessResponseDto> {
+  async login({ email, password }: LoginUserDto): Promise<TokenAccessDto> {
     try {
       const user = await this.usersRepository.findOne({ where: { email } });
       if (!user) throw new BadRequestException('email or password incorrect');
@@ -37,7 +39,7 @@ export class AuthService {
     }
   }
 
-  private async createSession(user: User): Promise<TokenAccessResponseDto> {
+  private async createSession(user: User): Promise<TokenAccessDto> {
     try {
       const payload = {
         userId: user.id,
@@ -45,7 +47,7 @@ export class AuthService {
         username: user.name,
       };
 
-      const refreshToken = this.jwtService.sign(
+      const refreshTokenCode = this.jwtService.sign(
         { email: user.email },
         {
           secret: process.env.JWT_REFRESH_TOKEN_SECRET,
@@ -53,17 +55,16 @@ export class AuthService {
         },
       );
 
-      const token = this.jwtService.sign(payload);
+      const accessToken = this.jwtService.sign(payload);
 
       await this.usersRepository.update(user.id, {
-        refreshTokenCode: refreshToken,
+        refreshTokenCode: refreshTokenCode,
         updatedAt: new Date(),
-        lastLogin: new Date(),
       });
 
       return {
-        token,
-        refreshToken,
+        accessToken,
+        refreshTokenCode,
       };
     } catch (error) {
       if (error instanceof BadRequestException) throw error;
@@ -72,7 +73,7 @@ export class AuthService {
     }
   }
 
-  async refreshToken({ refreshTokenCode }: RefreshTokenDto): Promise<TokenAccessResponseDto> {
+  async refreshToken({ refreshTokenCode }: RefreshTokenDto): Promise<TokenAccessDto> {
     try {
       const payload = this.jwtService.verify(refreshTokenCode, {
         secret: process.env.JWT_REFRESH_TOKEN_SECRET,
@@ -94,18 +95,17 @@ export class AuthService {
     }
   }
 
-  async logout(refreshTokenCode: string): Promise<void> {
-    try {
-      const user = await this.usersRepository.findOne({ where: { refreshTokenCode } });
-      if (!user) throw new BadRequestException('Invalid refresh token');
+  async logout({ refreshTokenCode, accessToken }: TokenAccessDto): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { refreshTokenCode } });
 
-      user.refreshTokenCode = null;
-
-      await this.usersRepository.save(user);
-    } catch (error) {
-      if (error instanceof UnauthorizedException) throw error;
-
-      throw new InternalServerErrorException('Uneexpected server error to logout');
+    if (!user) {
+      throw new BadRequestException('Invalid refresh token');
     }
+
+    await this.usersRepository.update(user.id, { refreshTokenCode: null });
+
+    const revokedToken = new RevokedToken();
+    revokedToken.token = accessToken;
+    await this.revokedTokenRepository.save(revokedToken);
   }
 }
