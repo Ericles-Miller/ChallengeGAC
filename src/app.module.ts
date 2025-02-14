@@ -3,10 +3,21 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/dataSource';
 import { LoggersModule } from './loggers/logger.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(dataSourceOptions), UsersModule, LoggersModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationOptions: { abortEarly: false },
+      envFilePath: ['.env'],
+    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
+    UsersModule, LoggersModule
+  ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {}
+}

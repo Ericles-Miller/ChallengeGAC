@@ -2,6 +2,7 @@ import { User } from 'src/users/entities/user.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import 'dotenv/config';
 import { Logger } from 'src/loggers/entities/logger.entity';
+import { RevokedToken } from 'src/auth/entities/revoked-token.entity';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -11,7 +12,7 @@ export const dataSourceOptions: DataSourceOptions = {
   database: process.env.DATABASE_NAME,
   port: Number(process.env.DATABASE_PORT),
   synchronize: false,
-  entities: [User, Logger],
+  entities: [User, Logger, RevokedToken],
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
   migrationsRun: true,
   logging: process.env.NODE_ENV === 'development' ? true : false,

@@ -23,6 +23,11 @@ export class User extends BaseIsActive {
   @ApiProperty()
   balance: number;
 
+  @Column({ type: 'varchar', length: 255 })
+  @ApiProperty()
+  @Exclude()
+  refreshTokenCode: string;
+
   constructor(balance: number, email: string, name: string) {
     super();
     this.balance = balance;
