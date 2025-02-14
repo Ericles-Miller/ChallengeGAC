@@ -86,8 +86,6 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
-
-  
   async findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,

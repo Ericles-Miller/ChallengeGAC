@@ -67,22 +67,21 @@ export class UsersService {
     try {
       const user = await this.usersRepository.findOne({ where: { id } });
       if (!user) throw new NotFoundException('UserId does not exist');
-  
+
       if (name !== undefined) user.name = name;
       if (balance !== undefined) user.balance = balance;
       if (password !== undefined) user.setPassword(password);
       if (isActive !== undefined) user.setIsActive(isActive);
-  
+
       user.setUpdatedAt();
-  
-      await this.usersRepository.save(user); 
+
+      await this.usersRepository.save(user);
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof BadRequestException) throw error;
-  
+
       throw new InternalServerErrorException('Unexpected server error to update user');
     }
   }
-
 
   async remove(id: string): Promise<void> {
     try {
