@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/dataSource';
+import { LoggersModule } from './loggers/logger.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -12,7 +13,7 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: ['.env'],
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
-    UsersModule,
+    UsersModule, LoggersModule
   ],
   controllers: [],
   providers: [],
