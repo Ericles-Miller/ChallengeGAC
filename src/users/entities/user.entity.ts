@@ -25,6 +25,7 @@ export class User extends BaseIsActive {
 
   @Column({ type: 'varchar', length: 255 })
   @ApiProperty()
+  @Exclude()
   refreshTokenCode: string;
 
   constructor(balance: number, email: string, name: string) {

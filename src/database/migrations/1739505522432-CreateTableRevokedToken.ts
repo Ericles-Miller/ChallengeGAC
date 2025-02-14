@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateTableRevekedToken1739505522432 implements MigrationInterface {
+export class CreateTableRevokedToken1739505522432 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE revoked_tokens (
         id SERIAL PRIMARY KEY,
         token VARCHAR NOT NULL,
-        revokedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        "revokedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
   }
