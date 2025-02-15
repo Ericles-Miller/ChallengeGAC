@@ -6,8 +6,8 @@ export class CreateTableTransactions1739552205801 implements MigrationInterface 
       -- Create ENUM to transactions status 
       
       DO $$ BEGIN
-          IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'estatus_transactions') THEN
-              CREATE TYPE estatus_transactions AS ENUM ('COMPLETED', 'REVERSED', 'PENDING');
+          IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'estatusTransactions') THEN
+              CREATE TYPE estatusTransactions AS ENUM ('COMPLETED', 'REVERSED', 'PENDING');
           END IF;
       END $$;
 
@@ -18,7 +18,7 @@ export class CreateTableTransactions1739552205801 implements MigrationInterface 
         "senderId" UUID NOT NULL,
         "receiverId" UUID NOT NULL,
         amount DOUBLE PRECISION NOT NULL,
-        status estatus_transactions NOT NULL,
+        status estatusTransactions NOT NULL,
         code TEXT NOT NULL,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP NULL,
@@ -29,24 +29,25 @@ export class CreateTableTransactions1739552205801 implements MigrationInterface 
 
       CREATE INDEX transactions_idx ON transactions (id, "senderId", "receiverId", code);
 
-      -- Criar a tabela transactions_reversals
-      CREATE TABLE transactions_reversals (
+      -- Criar a tabela "transactionsReversals"
+
+      CREATE TABLE "transactionsReversals" (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        transaction_id UUID NOT NULL,
+        "transactionId" UUID NOT NULL,
         reason VARCHAR(250) NULL,
-        reversed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "reversedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         
-        CONSTRAINT transactions_reversals_transaction_id_fkey FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
+        CONSTRAINT transactions_reversals_transaction_id_fkey FOREIGN KEY ("transactionId") REFERENCES transactions(id) ON DELETE CASCADE
       );
 
       -- Create index to foreign key
-      CREATE INDEX transactions_reversals_transaction_id_idx ON transactions_reversals (transaction_id);
+      CREATE INDEX transactions_reversals_transaction_id_idx ON "transactionsReversals" ("transactionId");
     `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE transactions_reversals`);
+    await queryRunner.query(`DROP TABLE transactionsReversals`);
     await queryRunner.query(`DROP TABLE transactions`);
-    await queryRunner.query(`DROP TYPE IF EXISTS estatus_transactions`);
+    await queryRunner.query(`DROP TYPE IF EXISTS estatusTransactions`);
   }
 }

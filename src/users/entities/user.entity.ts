@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseIsActive } from 'src/shared/Entities/BaseIsActive';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { hash } from 'bcryptjs';
 import { Exclude } from 'class-transformer';
+import { Transaction } from 'src/transactions/entities/transaction.entity';
 
 @Entity('users')
 export class User extends BaseIsActive {
@@ -27,6 +28,9 @@ export class User extends BaseIsActive {
   @ApiProperty()
   @Exclude()
   refreshTokenCode: string;
+
+  @OneToMany(() => Transaction, (transaction) => transaction.user, { cascade: true })
+  transactions?: Transaction;
 
   constructor(balance: number, email: string, name: string) {
     super();
