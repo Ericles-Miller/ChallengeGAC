@@ -65,7 +65,7 @@ $ yarn run start:prod
 
 ```
 
-## executando com docker 
+## Executando com docker 
 execute o comando abaixo para subir o container
 ```bash 
 docker-compose up -d 

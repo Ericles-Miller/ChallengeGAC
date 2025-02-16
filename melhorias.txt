@@ -1,49 +1,105 @@
-- cadastro de user 
-  - criptografar a senha na dto e nao no metodo 
-  - criar testes unitarios para a DTo 
-  - criar teste unitarios para o servico 
-  - criar testes de integracao para o controller 
-  - checkar documentacao dos metodos -- ok 
-  - buscar user pelo nome
-  - verificar os dados de paginacao para ver se vem em number ou string
+testes a serem feitas 
+ - testar o fucninamento dos endepoints de user 
+  - criar users 
+    - gerar erros de user com email igual 
+    - gerar errros de dto com propriedades invalidas e obrigatorias 
+    - tentar salvar um user com balance negativo e igual a zero
+
+  - listar users 
+    - listar n user e verificar a paginacao 
+    - buscar users pelo nome
+    - testar os dados de paginacao(tipo se sao string ou number)
+
+  - buscar user por id
+    - verificar se o id é valido 
+    - verificar se o user existe
+
+  - atualizar user
+   - verificar se o user existe
+   - enviar dados invalidos na DTO 
+   - enviar apenas alguns dados 
+   - tentar salvar um balance igual a zero ou negativo
+
+  - deletar user
+   - verificar se o user existe
+   - deletar um user que nao existe
+   - deletar um user
 
 
-- cadastro de lgos e monitoramento 
-  - verificar metodos de logger 
-  - criar monitoramento da api 
-  - verificar as rotas que terao logs 
-  - verificar teste para nivel de logs 
-  - verificar docs logs -- ok 
+ - testar o funcionamento dos endpoints de logs
+  - criar logs 
+     - gerar erros de log com dados invalidos
+     - gerar warn de logs com dados invalidos
+     - gerar info de logs com dados 
+     - vericar se o log foi salvo
+     - verificar se o log foi salvo com o nivel de log correto
 
-- auth 
-  - verificar logica de auth e guards token 
-  - criar testes unitarios para os metodos e middlewres
-  - testar funcao do logout depois de fazer um logout 
-  - testar novamente todos os metodos de logout 
-  -verifcar docs auth -- ok
+  - listar um log pelo id
+    - verificar se o id é valido
+    - verificar se o log existe
 
-- transactions 
-  - criar metodos de transactions -- ok
-  - criar os testes unitarios 
-  - usar query runner -- ok
-  - criar os testes unitarios para as Dto e servicoes 
-  - criar testes de integracao para o controller 
-  - verificar se a paginacao de transaction esta funcionando
+ - testar o funcionamento dos endpoints de auth
+  - logar um user 
+    - verificar se o email e a senha sao validos
+    - verificar se o user existe
+    - verificar se o token foi gerado
+    - verifcar erro de senha e de login 
 
+  - refresh token
+    - verificar se o refreshToken é valido
+    - verificar se o token foi gerado
+    - verificar se o refresh token foi gerado
+    - verificar se o token e o refresh token sao validos
 
-- banco de dados  
-  - verificar se ha padrao nos tipos de dados para as migrations 
-  - vericar a possibilidade de usar as migrations em um arquivo sql 
-  - verificar os tipos de dados que estao sendo definidos 
-  - verificar os teste de integracao em relacao ao sqlite 
-  - adcionar extensao para o banco que busque por nome unnacented
+  - logout 
+   - verificar se o logout foi feito
+   - verificar se o token foi invalidado
+   - verificar se o refresh token foi invalidado
+   - verifcar se consigo acessar a api novamente 
+   - tentar fazer um novo logout 
+  
 
-- docker e docker compose 
-  - verifcar seguranca do docker e docker compose 
-  - estar funcionando a api em docker compose e docker file 
+ - testar o funcionamento dos endpoints de transactions
+  - criar transacoes
+   - gerar erros de transacao com dados invalidos
+   - tnentar enviar um valor negativo ou zero
+   - verificar se a transacao foi salva
+   - tentar enviar um valor sem saldo na conta 
+   - verificar se o saldo foi atualizado
+   - verificar se gouve debitacao na conta do remetente
+   - verificar se houve creditacao na conta do destinatario
+   - verifcar o status da transacao
+   - vericar se o valor minimo foi de 0.01 centavos
 
+  - listar transacoes de um cliente 
+    - verficar se esses dados retornados sao do usuario logado
+    - vericcar se o usuario logado tem acesso a essas transacoes
+    - verificar se ele buscar um user pelo nome e é retornado esse user
+    - verificar se a paginacao esta funcionando
+    - vericar a busca por nome: ex: joao JOAO JOÃO joão Ericles Éricles ERICLES éRICLES ÉRICLES 
+    - buscar dados de outra pagina 
 
-- documentacao da api readme -- ok 
+  - listar uma transacao pelo id
+    - verificar se o id é valido
+    - verificar se consigo buscar uma transacao de um user que nao sou eu 
+    - verificar para quem foi enviado o dinheiro
+    -verificar a data de envio da transacao 
+    - verificar se o valor esta certo 
+
+  - reverter uma transacao
+    - verificar se o codigo e valido e pertence a esse usuario
+    - verificar se o user que recebeu o dinheiero possui saldo suficiente para reverter a transacao
+    - tentar reverter uma transacao que nao existe
+    - tentar reverter uma transacao que ja foi revertida
+    - verificar se o saldo foi atualizado
+    - verificar se o status da transacao foi alterado
+    - verificar se o valor foi devolvido ao remetente
+    - verificar se o valor foi debitado do destinatario
+    - verificar se o status da transacao foi alterado
+    - tnetar reverter uma transacao que nao pertence ao usuario logado
+
+  Teste de docuentacao 
+  - documentacao da api readme -- ok 
   - comecar a documentar apos a tarefa de transaction -- ok 
   - documentar a config do projeto para execucao -- ok
   - documentar os niveis de logger  -- ok 
@@ -51,6 +107,62 @@
   - documentar funcionamento da api -- ok
   - documentar comandos necessarios para executar os testes e api  -- ok
   - documentar porta para exebir os endpoints -- ok
+  - verificar todas as mensagens de erro 
+
+Prioridades a serem feitas
+  - criar testes unitarios para o servico de user
+  - criar testes de integracao para user 
+  - criar testes unitarios para dto de create e update user
+
+  - criar testes unitarios para transactions
+  - criar testes de integracao para transactions
+  - criar testes unitarios para dto de create e reversal transactions
+
+  - criar testes unitarios para auth
+  - criar testes de integracao para auth
+  - criar testes unitarios para dto de login
+  - criar testes para o middlewres de auth
+
+  - criar migrations em arquivo sql 
+  - padronizar tipos de dados e tamanho deles 
+  - verificar tipos se sao necessarios 
+  - instalar a extensao unaccent para o postgres
+  - configrar todos os decoratos para o sqlite
+
+  - criar monitoramento do sistesma
+  - associar com os logs que foram criados 
+
+  - dockerizar o projeto
+
+Melhorias nao tao importantes 
+- cadastro de user 
+  - criptografar a senha na dto e nao no metodo 
+  - checkar documentacao dos metodos -- ok 
+  - buscar user pelo nome 
+  - verificar os dados de paginacao para ver se vem em number ou string
+
+
+- cadastro de lgos e monitoramento 
+  - verificar metodos de logger 
+  - verificar as rotas que terao logs 
+  - verificar teste para nivel de logs 
+  - verificar docs logs -- ok 
+  - criar teste e2e para logs
+
+- auth 
+  - verificar logica de auth e guards token 
+  - verifcar docs auth -- ok
+  - criar teste e2e para auth
+
+- transactions 
+  - criar metodos de transactions -- ok
+  - usar query runner -- ok
+  - criar teste e2e para transactions 
+
+
+- docker e docker compose 
+  - verifcar seguranca do docker e docker compose 
+
 
 - code review 
   - revisar pacotes se estao atualizados e sendo usados 
@@ -62,10 +174,10 @@
   - verifcar as respostas se existem propriedades que nao deveriam aparecer como sub id pelo nome da pessoa 
   - vericar se os dados estao sendo salvos no banco da forma correta 
   - verificar as datas se estao retornando de forma correta de acordo com time zone 
-  - verificar nomes de arquivos e classe e funcoes 
+  - verificar nomes de arquivos e classe e funcoes se sao auto explicativos
   
 
-- bubs identificados 
+- bugs identificados 
   - corrigir datas nas responses para timezone local 
   - mudar a croptografia da senha para a dto 
   - tirar o balance da response de todas as transactions
