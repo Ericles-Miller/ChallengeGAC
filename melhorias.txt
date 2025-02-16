@@ -4,6 +4,8 @@
   - criar teste unitarios para o servico 
   - criar testes de integracao para o controller 
   - checkar documentacao e metodos 
+  - buscar user pelo nome
+  - verificar os dados de paginacao para ver se vem em number ou string
 
 
 - cadastro de lgos e monitoramento 
