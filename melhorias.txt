@@ -3,7 +3,7 @@
   - criar testes unitarios para a DTo 
   - criar teste unitarios para o servico 
   - criar testes de integracao para o controller 
-  - checkar documentacao e metodos 
+  - checkar documentacao dos metodos -- ok 
   - buscar user pelo nome
   - verificar os dados de paginacao para ver se vem em number ou string
 
@@ -13,17 +13,19 @@
   - criar monitoramento da api 
   - verificar as rotas que terao logs 
   - verificar teste para nivel de logs 
+  - verificar docs logs -- ok 
 
 - auth 
   - verificar logica de auth e guards token 
   - criar testes unitarios para os metodos e middlewres
   - testar funcao do logout depois de fazer um logout 
   - testar novamente todos os metodos de logout 
+  -verifcar docs auth -- ok
 
 - transactions 
-  - criar metodos de transactions 
+  - criar metodos de transactions -- ok
   - criar os testes unitarios 
-  - usar query runner 
+  - usar query runner -- ok
   - criar os testes unitarios para as Dto e servicoes 
   - criar testes de integracao para o controller 
   - verificar se a paginacao de transaction esta funcionando
@@ -34,20 +36,21 @@
   - vericar a possibilidade de usar as migrations em um arquivo sql 
   - verificar os tipos de dados que estao sendo definidos 
   - verificar os teste de integracao em relacao ao sqlite 
+  - adcionar extensao para o banco que busque por nome unnacented
 
 - docker e docker compose 
   - verifcar seguranca do docker e docker compose 
   - estar funcionando a api em docker compose e docker file 
 
 
-- documentacao da api readme
-  - comecar a documentar apos a tarefa de transaction 
-  - documentar a config do projeto para execucao 
-  - documentar os niveis de logger 
-  - documentar a config das variaveis de ambiente 
-  - documentar funcionamento da api 
-  - documentar comandos necessarios para executar os testes e api 
-  - documentar porta para exebir os endpoints 
+- documentacao da api readme -- ok 
+  - comecar a documentar apos a tarefa de transaction -- ok 
+  - documentar a config do projeto para execucao -- ok
+  - documentar os niveis de logger  -- ok 
+  - documentar a config das variaveis de ambiente -- ok 
+  - documentar funcionamento da api -- ok
+  - documentar comandos necessarios para executar os testes e api  -- ok
+  - documentar porta para exebir os endpoints -- ok
 
 - code review 
   - revisar pacotes se estao atualizados e sendo usados 
@@ -66,5 +69,4 @@
   - corrigir datas nas responses para timezone local 
   - mudar a croptografia da senha para a dto 
   - tirar o balance da response de todas as transactions
-  - adicionar ao banco de dados quando for criado a extensao unnacented
   - response com paginacao mostrar no swagger os dados de data
