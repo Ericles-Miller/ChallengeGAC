@@ -113,6 +113,7 @@ Prioridades a serem feitas
   - criar testes unitarios para o servico de user
   - criar testes de integracao para user 
   - criar testes unitarios para dto de create e update user
+  - criar testes para validar crip da senha na Dto de create user e update user
 
   - criar testes unitarios para transactions
   - criar testes de integracao para transactions
