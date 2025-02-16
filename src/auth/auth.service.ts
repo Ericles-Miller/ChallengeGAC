@@ -95,17 +95,23 @@ export class AuthService {
     }
   }
 
-  async logout({ refreshTokenCode, accessToken }: TokenAccessDto): Promise<void> {
-    const user = await this.usersRepository.findOne({ where: { refreshTokenCode } });
+  async logout(id: string, { refreshTokenCode, accessToken }: TokenAccessDto): Promise<void> {
+    try {
+      const user = await this.usersRepository.findOne({ where: { refreshTokenCode, id } });
 
-    if (!user) {
-      throw new BadRequestException('Invalid refresh token');
+      if (!user) {
+        throw new BadRequestException('Invalid refresh token');
+      }
+
+      await this.usersRepository.update(user.id, { refreshTokenCode: null });
+
+      const revokedToken = new RevokedToken();
+      revokedToken.token = accessToken;
+      await this.revokedTokenRepository.save(revokedToken);
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error;
+
+      throw new InternalServerErrorException('Unexpected server error to logout');
     }
-
-    await this.usersRepository.update(user.id, { refreshTokenCode: null });
-
-    const revokedToken = new RevokedToken();
-    revokedToken.token = accessToken;
-    await this.revokedTokenRepository.save(revokedToken);
   }
 }

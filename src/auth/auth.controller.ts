@@ -1,9 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Req } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { TokenAccessDto } from './dto/token-access.dto';
 import { RefreshTokenDto } from './dto/refresh-token.Dto';
+import { Request } from 'express';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -48,7 +49,7 @@ export class AuthController {
     sample request:
     POST /auth/refresh
     {
-      "refreshToken": "refreshToken"
+      "refreshTokenCode": "refreshToken"
     }
     `,
   })
@@ -81,13 +82,13 @@ export class AuthController {
     sample request:
     POST /auth/logout
     {
-      "tokenAccess": "tokenAccess",
-      "refreshToken": "refreshToken"
+      "accessToken": "tokenAccess",
+      "refreshTokenCode": "refreshToken"
     }
     `,
   })
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'logout user successfully',
   })
   @ApiResponse({
@@ -102,7 +103,9 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized',
   })
-  async logout(@Body() tokenAccessDto: TokenAccessDto): Promise<void> {
-    await this.authService.logout(tokenAccessDto);
+  @HttpCode(204)
+  async logout(@Req() request: Request, @Body() tokenAccessDto: TokenAccessDto): Promise<void> {
+    const { userId } = request.user;
+    await this.authService.logout(userId, tokenAccessDto);
   }
 }
