@@ -8,6 +8,9 @@ export class RevokedToken {
   @Column()
   token: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'datetime' : 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   revokedAt: Date;
 }

@@ -23,10 +23,10 @@ export class User extends BaseIsActive {
   @ApiProperty()
   balance: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   @ApiProperty()
   @Exclude()
-  refreshTokenCode: string;
+  refreshTokenCode?: string;
 
   @OneToMany(() => Transaction, (transaction) => transaction.sender, { cascade: true })
   sendTransactions: Transaction[];
