@@ -1,5 +1,6 @@
 import { validate } from 'class-validator';
 import { UpdateUserDto } from './update-user.dto';
+import { compare } from 'bcryptjs';
 
 describe('Suit test Update-user.dto', () => {
   it.each([
@@ -27,6 +28,11 @@ describe('Suit test Update-user.dto', () => {
 
       const errors = await validate(updateUserDto);
       expect(errors.length).toBe(0);
+
+      if (password) {
+        const isPasswordEncrypted = await compare(password, updateUserDto.password);
+        expect(isPasswordEncrypted).toBe(true);
+      }
     },
   );
 

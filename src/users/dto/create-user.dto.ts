@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEmail, IsNumber, MinLength, MaxLength, IsNotEmpty, Min, Matches } from 'class-validator';
+import { EncryptPassword } from '../encrypt-password.decorator';
 
 export class CreateUserDto {
   @ApiProperty({ type: String, required: true, example: 'John Doe' })
@@ -24,6 +25,7 @@ export class CreateUserDto {
     message:
       'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character',
   })
+  @EncryptPassword()
   password: string;
 
   @ApiProperty({ type: Number, required: true, example: 0.1 })

@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseIsActive } from 'src/shared/Entities/BaseIsActive';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { hash } from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import { Transaction } from 'src/transactions/entities/transaction.entity';
 
@@ -35,17 +34,12 @@ export class User extends BaseIsActive {
   @OneToMany(() => Transaction, (transaction) => transaction.receiver)
   receivedTransactions: Transaction[];
 
-  constructor(balance: number, email: string, name: string) {
+  constructor(balance: number, email: string, name: string, password: string) {
     super();
-    this.balance = balance ?? 0;
+    this.balance = balance;
+    this.password = password;
     this.email = email;
     this.name = name;
     this.isActive = true;
-  }
-
-  async setPassword(password: string): Promise<void> {
-    // remover
-    const passwordHash = await hash(password, 8);
-    this.password = passwordHash;
   }
 }
