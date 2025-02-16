@@ -38,7 +38,7 @@ $ yarn install
 
 ## Run tests
 
-OBS: para executar os testes de loggers set a variável de ambiente LOG_RUlES de acordo com o arquivo .env.example
+OBS: para executar os testes de loggers set a variável de ambiente LOG_RUlES de acordo com o arquivo .env.example. Além disso, set a variável de ambiente NODE_ENV para test.
 
 ```bash
 # unit tests
