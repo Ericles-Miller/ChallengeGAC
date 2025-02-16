@@ -4,13 +4,13 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
   Query,
   UseInterceptors,
   ClassSerializerInterceptor,
   UseGuards,
   HttpCode,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,6 +19,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } 
 import { User } from './entities/user.entity';
 import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
 import { JwtAuthGuard } from 'src/auth/Jwt-auth-guard';
+import { Request } from 'express';
 
 @Controller('users')
 @ApiTags('users')
@@ -100,15 +101,15 @@ export class UsersController {
     return await this.usersService.findAll(pageNumber, limitNumber);
   }
 
-  @Get(':id')
+  @Get('/find-your-user')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
-    summary: 'find users with id',
+    summary: 'find info of your user',
     description: `
     sample request: find user with id
-    Get /user/8abcb8a5-9709-41c7-85df-08a44fd1c6f4
+    Get /user/find-your-user
     `,
   })
   @ApiResponse({
@@ -128,11 +129,12 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
-  async findOne(@Param('id') id: string): Promise<User> {
-    return await this.usersService.findOne(id);
+  async findOne(@Req() request: Request): Promise<User> {
+    const { userId } = request.user;
+    return await this.usersService.findOne(userId);
   }
 
-  @Patch(':id')
+  @Patch('')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -144,7 +146,7 @@ export class UsersController {
     summary: 'Update user',
     description: `
     sample request: update all properties user. Obs: All of properties are optionals
-    PATCH /users/8abcb8a5-9709-41c7-85df-08a44fd1c6f4/
+    PATCH /users/
     REQUEST BODY: 
     {
       "name": "John Doe",
@@ -175,11 +177,12 @@ export class UsersController {
     description: 'Bad request',
   })
   @HttpCode(204)
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<void> {
-    return await this.usersService.update(id, updateUserDto);
+  async update(@Req() request: Request, @Body() updateUserDto: UpdateUserDto): Promise<void> {
+    const { userId } = request.user;
+    return await this.usersService.update(userId, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete('')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -187,7 +190,7 @@ export class UsersController {
     summary: 'Delete user',
     description: `
     sample request: delete user 
-    DELETE /users/8abcb8a5-9709-41c7-85df-08a44fd1c6f4/
+    DELETE /users/
     `,
   })
   @ApiResponse({
@@ -207,7 +210,8 @@ export class UsersController {
     description: 'Unauthorized',
   })
   @HttpCode(204)
-  async remove(@Param('id') id: string): Promise<void> {
-    return await this.usersService.remove(id);
+  async remove(@Req() request: Request): Promise<void> {
+    const { userId } = request.user;
+    return await this.usersService.remove(userId);
   }
 }

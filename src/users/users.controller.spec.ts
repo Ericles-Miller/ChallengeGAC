@@ -11,6 +11,7 @@ import { RevokedToken } from 'src/auth/entities/revoked-token.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { Transaction } from 'src/transactions/entities/transaction.entity';
 import { TransactionReversal } from 'src/transactions/entities/transaction-reversal.entity';
+import { Request } from 'express';
 
 describe('UsersController (Integration)', () => {
   let controller: UsersController;
@@ -30,7 +31,10 @@ describe('UsersController (Integration)', () => {
           useValue: {
             canActivate: (context: ExecutionContext) => {
               const request = context.switchToHttp().getRequest();
-              request.user = { id: 1, email: 'authuser@example.com' };
+              request.user = {
+                userId: '9b815039-1e43-4be1-84ef-71e5fad13373',
+                email: 'authuser@example.com',
+              };
               return true;
             },
           },
@@ -109,7 +113,14 @@ describe('UsersController (Integration)', () => {
       balance: 0,
     });
 
-    const foundUser = await controller.findOne(user.id);
+    const request: Request = {
+      user: {
+        userId: user.id,
+        email: user.email,
+      },
+    } as any;
+
+    const foundUser = await controller.findOne(request);
     expect(foundUser).toBeDefined();
     expect(foundUser).toEqual(user);
   });
@@ -122,13 +133,20 @@ describe('UsersController (Integration)', () => {
       balance: 0,
     });
 
-    await controller.update(user.id, {
+    const request: Request = {
+      user: {
+        userId: user.id,
+        email: user.email,
+      },
+    } as any;
+
+    await controller.update(request, {
       name: 'Mark Doe',
       password: '@18Pack12340',
       balance: 1000,
     });
 
-    const updatedUser = await controller.findOne(user.id);
+    const updatedUser = await controller.findOne(request);
 
     expect(updatedUser).toBeDefined();
     expect(updatedUser.name).toBe('Mark Doe');
@@ -143,7 +161,14 @@ describe('UsersController (Integration)', () => {
       balance: 0,
     });
 
-    await controller.remove(user.id);
+    const request: Request = {
+      user: {
+        userId: user.id,
+        email: user.email,
+      },
+    } as any;
+
+    await controller.remove(request);
 
     const users = await controller.findAll('1', '10');
     expect(users).toBeDefined();
