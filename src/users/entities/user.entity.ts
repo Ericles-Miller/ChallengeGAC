@@ -20,7 +20,7 @@ export class User extends BaseIsActive {
   @Exclude()
   password: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', default: 0 })
   @ApiProperty()
   balance: number;
 
@@ -30,17 +30,18 @@ export class User extends BaseIsActive {
   refreshTokenCode: string;
 
   @OneToMany(() => Transaction, (transaction) => transaction.user, { cascade: true })
-  transactions?: Transaction;
+  transactions: Transaction[];
 
   constructor(balance: number, email: string, name: string) {
     super();
-    this.balance = balance;
+    this.balance = balance ?? 0;
     this.email = email;
     this.name = name;
     this.isActive = true;
   }
 
   async setPassword(password: string): Promise<void> {
+    // remover
     const passwordHash = await hash(password, 8);
     this.password = passwordHash;
   }

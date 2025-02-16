@@ -5,26 +5,27 @@ export class CreateTableTransactions1739552205801 implements MigrationInterface 
     await queryRunner.query(`
       -- Create ENUM to transactions status 
       
+     -- Create ENUM to transactions status
       DO $$ BEGIN
           IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'estatusTransactions') THEN
               CREATE TYPE estatusTransactions AS ENUM ('COMPLETED', 'REVERSED', 'PENDING');
           END IF;
       END $$;
 
-      -- Create table transactions
-
+      -- Alter table transactions
       CREATE TABLE transactions (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        "senderId" UUID NOT NULL,
-        "receiverId" UUID NOT NULL,
-        amount DOUBLE PRECISION NOT NULL,
-        status estatusTransactions NOT NULL,
-        code TEXT NOT NULL,
-        "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "updatedAt" TIMESTAMP NULL,
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          "senderId" UUID NOT NULL,
+          "receiverId" UUID NOT NULL,
+          amount DOUBLE PRECISION NOT NULL,
+          status estatusTransactions NOT NULL,
+          code TEXT NOT NULL,
+          "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP NULL,
 
-        CONSTRAINT transactions_sender_id_fkey FOREIGN KEY ("senderId") REFERENCES users(id) ON DELETE CASCADE,
-        CONSTRAINT transactions_receiver_id_fkey FOREIGN KEY ("receiverId") REFERENCES users(id) ON DELETE CASCADE
+          -- Remove userId and alter senderId relationship
+          CONSTRAINT transactions_sender_id_fkey FOREIGN KEY ("senderId") REFERENCES users(id) ON DELETE CASCADE,
+          CONSTRAINT transactions_receiver_id_fkey FOREIGN KEY ("receiverId") REFERENCES users(id) ON DELETE CASCADE
       );
 
       CREATE INDEX transactions_idx ON transactions (id, "senderId", "receiverId", code);

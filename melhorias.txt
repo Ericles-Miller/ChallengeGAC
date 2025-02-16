@@ -56,4 +56,9 @@
   - verifcar as respostas se existem propriedades que nao deveriam aparecer como sub id pelo nome da pessoa 
   - vericar se os dados estao sendo salvos no banco da forma correta 
   - verificar as datas se estao retornando de forma correta de acordo com time zone 
+  - verificar nomes de arquivos e classe e funcoes 
   
+
+- bubs identificados 
+  - corrigir datas nas responses para timezone local 
+  - mudar a croptografia da senha para a dto 

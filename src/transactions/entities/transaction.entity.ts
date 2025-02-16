@@ -5,10 +5,10 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { TransactionReversal } from './transaction-reversal.entity';
 import { User } from 'src/users/entities/user.entity';
 
-@Entity('Transaction')
+@Entity('transactions')
 export class Transaction extends BaseEntity {
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'uuid' })
   senderId: string;
 
   @ApiProperty()
@@ -27,20 +27,17 @@ export class Transaction extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   code: string;
 
-  @ApiProperty()
-  @Column({ type: 'uuid' })
-  userId: string;
-
   @OneToMany(() => TransactionReversal, (transactionReversal) => transactionReversal.transaction, {
     cascade: true,
   })
-  transactionReversals?: TransactionReversal;
+  transactionReversals?: TransactionReversal[];
 
   @ManyToOne(() => User, (user) => user.transactions, {
     nullable: false,
     onDelete: 'CASCADE',
+    eager: true,
   })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'senderId' })
   user: User;
 
   constructor(amount: number, receiverId: string, senderId: string, status: EStatusTransactions) {
@@ -58,7 +55,7 @@ export class Transaction extends BaseEntity {
   }
 
   setCode(): void {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars = process.env.CHAR_CODE;
     let code = '';
 
     for (let i = 0; i <= 50; i++) {

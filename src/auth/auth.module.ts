@@ -14,7 +14,7 @@ dotenv.config();
     TypeOrmModule.forFeature([User, RevokedToken]),
     JwtModule.register({
       secret: process.env.JWT_TOKEN_SECRET,
-      signOptions: { expiresIn: '2min' },
+      signOptions: { expiresIn: '1h' },
     }),
   ],
   controllers: [AuthController],
