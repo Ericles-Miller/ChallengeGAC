@@ -6,12 +6,15 @@ export abstract class BaseEntity {
   @ApiProperty()
   id: string;
 
-  @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({
+    type: process.env.NODE_ENV === 'test' ? 'datetime' : 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()
-  @UpdateDateColumn({ type: 'timestamptz', nullable: true })
+  @UpdateDateColumn({ type: process.env.NODE_ENV === 'test' ? 'datetime' : 'timestamptz', nullable: true })
   updatedAt?: Date;
 
   constructor() {}

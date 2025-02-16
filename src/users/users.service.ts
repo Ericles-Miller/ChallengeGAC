@@ -20,11 +20,12 @@ export class UsersService {
       const findUser = await this.usersRepository.findOne({ where: { email } });
       if (findUser) throw new BadRequestException('User already exists');
 
-      const user = new User(balance, email, name);
-      await user.setPassword(password);
+      const user = new User(balance, email, name, password);
 
       return await this.usersRepository.save(user);
     } catch (error) {
+      console.log(error);
+
       if (error instanceof BadRequestException) throw error;
 
       throw new InternalServerErrorException('Unexpected server error to create a new user');
@@ -70,7 +71,7 @@ export class UsersService {
 
       if (name !== undefined) user.name = name;
       if (balance !== undefined) user.balance = balance;
-      if (password !== undefined) user.setPassword(password);
+      if (password !== undefined) user.password = password;
       if (isActive !== undefined) user.setIsActive(isActive);
 
       user.setUpdatedAt();

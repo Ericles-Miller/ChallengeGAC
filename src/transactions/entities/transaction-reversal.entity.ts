@@ -13,7 +13,10 @@ export class TransactionReversal extends BaseEntity {
   @ApiProperty()
   reason: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'datetime' : 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   @ApiProperty()
   reversedAt: Date;
 
