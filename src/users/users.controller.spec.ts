@@ -100,4 +100,53 @@ describe('UsersController (Integration)', () => {
     expect(users.data[0]).toEqual(userOne);
     expect(users.data[1]).toEqual(userTwo);
   });
+
+  it('should return a single user', async () => {
+    const user = await controller.create({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      password: '@18Pack12340',
+      balance: 0,
+    });
+
+    const foundUser = await controller.findOne(user.id);
+    expect(foundUser).toBeDefined();
+    expect(foundUser).toEqual(user);
+  });
+
+  it('should update a user', async () => {
+    const user = await controller.create({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      password: '@18Pack12340',
+      balance: 0,
+    });
+
+    await controller.update(user.id, {
+      name: 'Mark Doe',
+      password: '@18Pack12340',
+      balance: 1000,
+    });
+
+    const updatedUser = await controller.findOne(user.id);
+
+    expect(updatedUser).toBeDefined();
+    expect(updatedUser.name).toBe('Mark Doe');
+    expect(updatedUser.balance).toBe(1000);
+  });
+
+  it('should delete a user', async () => {
+    const user = await controller.create({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      password: '@18Pack12340',
+      balance: 0,
+    });
+
+    await controller.remove(user.id);
+
+    const users = await controller.findAll('1', '10');
+    expect(users).toBeDefined();
+    expect(users.data).toHaveLength(0);
+  });
 });
