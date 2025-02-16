@@ -16,5 +16,5 @@ export class PaginatedListDto<T> {
 
   @ApiProperty()
   @Expose()
-  lastPage: number;
+  limit: number;
 }

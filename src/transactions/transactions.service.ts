@@ -6,16 +6,21 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { EStatusTransactions } from './status-transaction.enum';
 import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TransactionsService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+
+    @InjectRepository(Transaction)
+    private readonly repository: Repository<Transaction>,
+  ) {}
 
   async create(senderId: string, { amount, receiverId }: CreateTransactionDto): Promise<Transaction> {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -63,14 +68,39 @@ export class TransactionsService {
     }
   }
 
-  // findAll(
-  //   page: number,
-  //   limit: number,
-  //   senderId: string,
-  //   receiverName: string,
-  // ): Promise<PaginatedListDto<User[]>> {
+  async findAll(
+    page: number,
+    limit: number,
+    senderId: string,
+    receiverName: string,
+  ): Promise<PaginatedListDto<Transaction[]>> {
+    try {
+      const query = this.repository
+        .createQueryBuilder('transaction')
+        .innerJoinAndSelect('transaction.receiver', 'receiver')
+        .where('transaction.senderId = :senderId', { senderId });
 
-  // }
+      if (receiverName)
+        query.andWhere('unaccent(receiver.name) ILIKE :receiverName', {
+          receiverName: `%${receiverName}%`,
+        });
+
+      const [transactions, total] = await query
+        .skip((page - 1) * limit)
+        .take(limit)
+        .orderBy('transaction.createdAt', 'DESC')
+        .getManyAndCount();
+
+      return {
+        data: transactions,
+        total,
+        page,
+        limit,
+      };
+    } catch {
+      throw new InternalServerErrorException('Error to find all transactions');
+    }
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} transaction`;

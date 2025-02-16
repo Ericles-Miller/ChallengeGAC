@@ -12,7 +12,7 @@ export class Transaction extends BaseEntity {
   senderId: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'uuid' })
   receiverId: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -32,13 +32,17 @@ export class Transaction extends BaseEntity {
   })
   transactionReversals?: TransactionReversal[];
 
-  @ManyToOne(() => User, (user) => user.transactions, {
+  @ManyToOne(() => User, (user) => user.sendTransactions, {
     nullable: false,
     onDelete: 'CASCADE',
     eager: true,
   })
   @JoinColumn({ name: 'senderId' })
-  user: User;
+  sender: User;
+
+  @ManyToOne(() => User, (user) => user.receivedTransactions)
+  @JoinColumn({ name: 'receiverId' })
+  receiver: User;
 
   constructor(amount: number, receiverId: string, senderId: string, status: EStatusTransactions) {
     super();

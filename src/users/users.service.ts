@@ -15,6 +15,7 @@ import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
 export class UsersService {
   constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>) {}
 
+
   async create({ balance, email, name, password }: CreateUserDto): Promise<User> {
     try {
       const findUser = await this.usersRepository.findOne({ where: { email } });
@@ -42,7 +43,7 @@ export class UsersService {
         data: users,
         total,
         page,
-        lastPage: Math.ceil(total / limit),
+        limit: Math.ceil(total / limit),
       };
     } catch {
       throw new InternalServerErrorException('Internal server error finding movies');

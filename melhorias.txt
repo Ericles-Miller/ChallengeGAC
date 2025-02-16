@@ -62,3 +62,6 @@
 - bubs identificados 
   - corrigir datas nas responses para timezone local 
   - mudar a croptografia da senha para a dto 
+  - tirar o balance da response de todas as transactions
+  - adicionar ao banco de dados quando for criado a extensao unnacented
+  - response com paginacao mostrar no swagger os dados de data

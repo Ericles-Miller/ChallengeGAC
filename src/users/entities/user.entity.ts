@@ -29,8 +29,11 @@ export class User extends BaseIsActive {
   @Exclude()
   refreshTokenCode: string;
 
-  @OneToMany(() => Transaction, (transaction) => transaction.user, { cascade: true })
-  transactions: Transaction[];
+  @OneToMany(() => Transaction, (transaction) => transaction.sender, { cascade: true })
+  sendTransactions: Transaction[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.receiver)
+  receivedTransactions: Transaction[];
 
   constructor(balance: number, email: string, name: string) {
     super();
