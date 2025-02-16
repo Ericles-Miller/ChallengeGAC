@@ -38,4 +38,22 @@ describe('UsersService', () => {
     expect(service).toBeDefined();
     expect(repository).toBeDefined();
   });
+
+  describe('Suit test to create a new user', () => {
+    it('should create a new user', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(repository, 'save').mockResolvedValueOnce(user);
+
+      const result = await service.create({
+        balance: 100,
+        email: 'test@test.com',
+        name: 'John Doe',
+        password: 'password',
+      });
+
+      expect(result).toEqual(user);
+      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(repository.save).toHaveBeenCalledTimes(1);
+    });
+  });
 });
