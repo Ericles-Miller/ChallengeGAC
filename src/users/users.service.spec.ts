@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -54,6 +55,32 @@ describe('UsersService', () => {
       expect(result).toEqual(user);
       expect(repository.findOne).toHaveBeenCalledTimes(1);
       expect(repository.save).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw a BadRequestException if user already exists', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(user);
+
+      await expect(
+        service.create({
+          balance: 100,
+          email: 'test@test.com',
+          name: 'John Doe',
+          password: 'password',
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw a InternalServerErrorException if unexpected error occurs', async () => {
+      jest.spyOn(repository, 'findOne').mockRejectedValueOnce(new Error());
+
+      await expect(
+        service.create({
+          balance: 100,
+          email: 'test@test.com',
+          name: 'John Doe',
+          password: 'password',
+        }),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 });
