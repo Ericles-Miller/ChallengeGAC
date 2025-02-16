@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/dataSource';
 import { LoggersModule } from './loggers/logger.module';
 import { ConfigModule } from '@nestjs/config';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -13,7 +14,9 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: ['.env'],
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
-    UsersModule, LoggersModule
+    UsersModule,
+    LoggersModule,
+    TransactionsModule,
   ],
   controllers: [],
   providers: [],
