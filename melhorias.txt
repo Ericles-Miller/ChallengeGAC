@@ -24,6 +24,7 @@
   - usar query runner 
   - criar os testes unitarios para as Dto e servicoes 
   - criar testes de integracao para o controller 
+  - verificar se a paginacao de transaction esta funcionando
 
 
 - banco de dados  

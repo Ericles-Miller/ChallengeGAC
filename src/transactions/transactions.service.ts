@@ -102,15 +102,30 @@ export class TransactionsService {
     }
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} transaction`;
-  // }
+  async findOne(id: string): Promise<Transaction> {
+    try {
+      const transaction = await this.repository
+        .createQueryBuilder('transaction')
+        .leftJoinAndSelect('transaction.receiver', 'receiver')
+        .where('transaction.id = :id', { id })
+        .select([
+          'transaction.id',
+          'transaction.amount',
+          'transaction.status',
+          'transaction.code',
+          'transaction.createdAt',
+          'receiver.id',
+          'receiver.name',
+        ])
+        .getOne();
 
-  // update(id: number, updateTransactionDto: UpdateTransactionDto) {
-  //   return `This action updates a #${id} transaction`;
-  // }
+      if (!transaction) throw new NotFoundException('TransactionId does not exist');
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} transaction`;
-  // }
+      return transaction;
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
+      throw new InternalServerErrorException('Error to find a transaction');
+    }
+  }
 }

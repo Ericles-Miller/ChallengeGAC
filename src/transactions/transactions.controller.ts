@@ -8,6 +8,7 @@ import {
   Query,
   ClassSerializerInterceptor,
   UseInterceptors,
+  Param,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -99,18 +100,35 @@ export class TransactionsController {
     return await this.transactionsService.findAll(pageNumber, limitNumber, userId, senderName);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.transactionsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
-  //   return this.transactionsService.update(+id, updateTransactionDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.transactionsService.remove(+id);
-  // }
+  @Get(':id')
+  @ApiBearerAuth('sessionAuth')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({
+    summary: 'find transaction by id',
+    description: `
+    sample request: find transaction by id
+    Get /transactions/fec9f1f7-ccdf-414a-81c6-687fc32542d7
+    `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'list all Transactions successfully',
+    type: Transaction,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  async findOne(@Param('id') id: string): Promise<Transaction> {
+    return await this.transactionsService.findOne(id);
+  }
 }
