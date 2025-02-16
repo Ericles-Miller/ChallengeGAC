@@ -29,6 +29,6 @@ export class CreateUserDto {
   @ApiProperty({ type: Number, required: true, example: 0.1 })
   @IsNumber()
   @IsNotEmpty()
-  @Min(0.1)
+  @Min(0.0)
   balance: number;
 }
