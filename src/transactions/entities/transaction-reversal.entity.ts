@@ -3,7 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { BaseEntity } from 'src/shared/Entities/base.entity';
 
-@Entity('TransactionReversal')
+@Entity('transactionsReversals')
 export class TransactionReversal extends BaseEntity {
   @Column({ type: 'uuid' })
   @ApiProperty()
@@ -24,10 +24,14 @@ export class TransactionReversal extends BaseEntity {
   @JoinColumn({ name: 'transactionId' })
   transaction: Transaction;
 
-  constructor(transactionId: string, reason: string) {
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  amount: number;
+
+  constructor(transactionId: string, reason: string, amount: number) {
     super();
     this.transactionId = transactionId;
     this.reason = reason;
+    this.amount = amount;
     this.reversedAt = new Date();
   }
 }

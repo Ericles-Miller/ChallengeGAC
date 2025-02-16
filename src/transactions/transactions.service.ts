@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
@@ -12,6 +11,8 @@ import { User } from 'src/users/entities/user.entity';
 import { EStatusTransactions } from './status-transaction.enum';
 import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TransactionReversal } from './entities/transaction-reversal.entity';
+import { CreateTransactionReversalDto } from './dto/create-transaction-reversal.dto';
 
 @Injectable()
 export class TransactionsService {
@@ -48,6 +49,7 @@ export class TransactionsService {
       await queryRunner.manager.save(User, receiver);
 
       transaction.status = EStatusTransactions.completed;
+      transaction.setUpdatedAt();
       await queryRunner.manager.save(Transaction, transaction);
 
       await queryRunner.commitTransaction();
@@ -55,12 +57,7 @@ export class TransactionsService {
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
-      if (
-        error instanceof BadRequestException ||
-        error instanceof UnauthorizedException ||
-        error instanceof NotFoundException
-      )
-        throw error;
+      if (error instanceof BadRequestException || error instanceof NotFoundException) throw error;
 
       throw new InternalServerErrorException('Error to create a new transaction');
     } finally {
@@ -126,6 +123,56 @@ export class TransactionsService {
       if (error instanceof NotFoundException) throw error;
 
       throw new InternalServerErrorException('Error to find a transaction');
+    }
+  }
+
+  async reversal(
+    receiverId: string,
+    { code, reason }: CreateTransactionReversalDto,
+  ): Promise<TransactionReversal> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transaction = await queryRunner.manager.findOne(Transaction, {
+        where: { code, receiverId },
+      });
+      if (!transaction) throw new NotFoundException('Transaction does not exist or not belong to user.');
+
+      if (transaction.status !== EStatusTransactions.completed)
+        throw new BadRequestException(
+          'To perform the transaction reversal, the transaction status must be completed.',
+        );
+
+      const receiver = await queryRunner.manager.findOne(User, { where: { id: transaction.receiverId } });
+      if (receiver.balance < transaction.amount) throw new BadRequestException('Insufficient balance');
+
+      const sender = await queryRunner.manager.findOne(User, { where: { id: transaction.senderId } });
+      sender.balance += transaction.amount;
+      receiver.balance -= transaction.amount;
+
+      const transactionReversal = new TransactionReversal(transaction.id, reason, transaction.amount);
+      await queryRunner.manager.save(TransactionReversal, transactionReversal);
+
+      await queryRunner.manager.save(User, sender);
+      await queryRunner.manager.save(User, receiver);
+
+      transaction.status = EStatusTransactions.reversed;
+      transaction.setUpdatedAt();
+      await queryRunner.manager.save(Transaction, transaction);
+
+      await queryRunner.commitTransaction();
+
+      return transactionReversal;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      if (error instanceof BadRequestException || error instanceof NotFoundException) throw error;
+
+      throw new InternalServerErrorException('Error to create a new transaction reversal');
+    } finally {
+      await queryRunner.release();
     }
   }
 }

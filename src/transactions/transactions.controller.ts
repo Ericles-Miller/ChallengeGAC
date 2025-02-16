@@ -17,6 +17,8 @@ import { JwtAuthGuard } from 'src/auth/Jwt-auth-guard';
 import { Transaction } from './entities/transaction.entity';
 import { Request } from 'express';
 import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
+import { TransactionReversal } from './entities/transaction-reversal.entity';
+import { CreateTransactionReversalDto } from './dto/create-transaction-reversal.dto';
 
 @Controller('transactions')
 @ApiTags('transactions')
@@ -130,5 +132,45 @@ export class TransactionsController {
   })
   async findOne(@Param('id') id: string): Promise<Transaction> {
     return await this.transactionsService.findOne(id);
+  }
+
+  @Post('reversal')
+  @ApiBearerAuth('sessionAuth')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({
+    summary: 'transaction reversal',
+    description: `
+    sample request: transaction reversal
+    Post /transactions/reversal/123456
+    `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'transaction reversal successfully',
+    type: TransactionReversal,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request',
+  })
+  async reversal(
+    @Body() createTransactionReversalDto: CreateTransactionReversalDto,
+    @Req() request: Request,
+  ): Promise<TransactionReversal> {
+    const { userId } = request.user;
+    return await this.transactionsService.reversal(userId, createTransactionReversalDto);
   }
 }
