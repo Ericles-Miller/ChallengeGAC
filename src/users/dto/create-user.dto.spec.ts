@@ -31,6 +31,8 @@ describe('Suit test Create-user.dto', () => {
     ['a'.repeat(81), 'aa@example.com', 'Qw$vdsa124', null],
     ['a'.repeat(20), 'aa@example.com', 'Qw$vdsa124', undefined],
     ['a'.repeat(20), 'aa@example.com', '', 40],
+    ['a'.repeat(20), 'aa@example.com', null, 40],
+    ['a'.repeat(20), 'aa@example.com', undefined, 40],
     ['a'.repeat(20), '', 'Qw$vdsa124', '40'],
     ['a'.repeat(20), null, 'Qw$vdsa124', '40'],
     ['a'.repeat(20), undefined, 'Qw$vdsa124', '40'],

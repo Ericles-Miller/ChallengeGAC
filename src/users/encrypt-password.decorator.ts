@@ -10,6 +10,8 @@ export function EncryptPassword(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         async validate(value: any, args: ValidationArguments) {
+          if (!value) return false;
+
           const hashedPassword = await hash(value, 8);
           (args.object as any)[propertyName] = hashedPassword;
           return true;
