@@ -26,6 +26,17 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'create transaction',
+    description: `
+    sample request: create transaction
+    Post /transactions
+    {
+      "amount": 100,
+      "receiverId": "0987654321"
+    }
+    `,
+  })
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -141,13 +152,17 @@ export class TransactionsController {
   @ApiOperation({
     summary: 'transaction reversal',
     description: `
-    sample request: transaction reversal
-    Post /transactions/reversal/123456
+    sample request: 
+    Post /transactions/reversal 
+    {
+      "code": "123456",
+      "reason": "reason"
+    }
     `,
   })
   @ApiResponse({
-    status: 200,
-    description: 'transaction reversal successfully',
+    status: 201,
+    description: 'transaction reversal create successfully',
     type: TransactionReversal,
   })
   @ApiResponse({

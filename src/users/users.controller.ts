@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -36,7 +37,7 @@ export class UsersController {
       "name": "name movie",
       "email": "email@example.com",
       "password": "********",
-      "balance": 0.1
+      "balance": 0.0
     }
     `,
   })
@@ -51,14 +52,14 @@ export class UsersController {
   })
   @ApiResponse({
     status: 400,
-    description: 'bad request to send data',
+    description: 'bad request',
   })
   @ApiResponse({
     status: 401,
     description: 'Unauthorized',
   })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return await this.usersService.create(createUserDto);
   }
 
   @Get()
@@ -68,6 +69,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'find all users',
     description: `
+    This endpoint is used to help the user find other users in the API
     sample request: find users paginated default
     Get /users?page=1&limit=10
 
@@ -111,7 +113,7 @@ export class UsersController {
   })
   @ApiResponse({
     status: 404,
-    description: 'userId does not exists',
+    description: 'not found',
   })
   @ApiResponse({
     status: 200,
@@ -126,8 +128,8 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<User> {
+    return await this.usersService.findOne(id);
   }
 
   @Patch(':id')
@@ -154,10 +156,10 @@ export class UsersController {
   })
   @ApiResponse({
     status: 404,
-    description: 'userId does not exists',
+    description: 'Not found',
   })
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'update user successfully',
   })
   @ApiResponse({
@@ -170,10 +172,11 @@ export class UsersController {
   })
   @ApiResponse({
     status: 400,
-    description: 'error in data user',
+    description: 'Bad request',
   })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  @HttpCode(204)
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<void> {
+    return await this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
@@ -192,7 +195,7 @@ export class UsersController {
     description: 'userId does not exists',
   })
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'delete user successfully',
   })
   @ApiResponse({
@@ -203,7 +206,8 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @HttpCode(204)
+  async remove(@Param('id') id: string): Promise<void> {
+    return await this.usersService.remove(id);
   }
 }
