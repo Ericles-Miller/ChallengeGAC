@@ -91,6 +91,10 @@ export class AuthService {
     } catch (error) {
       if (error instanceof UnauthorizedException) throw error;
 
+      if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('Invalid or expired token');
+      }
+
       throw new InternalServerErrorException('Unexpected server error to refresh token');
     }
   }
