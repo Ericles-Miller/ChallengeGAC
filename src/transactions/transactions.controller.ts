@@ -141,8 +141,9 @@ export class TransactionsController {
     status: 404,
     description: 'Not found',
   })
-  async findOne(@Param('id') id: string): Promise<Transaction> {
-    return await this.transactionsService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() request: Request): Promise<Transaction> {
+    const { userId } = request.user;
+    return await this.transactionsService.findOne(id, userId);
   }
 
   @Post('reversal')
