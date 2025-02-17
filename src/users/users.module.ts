@@ -10,5 +10,6 @@ import { RevokedToken } from 'src/auth/entities/revoked-token.entity';
   imports: [TypeOrmModule.forFeature([User, RevokedToken]), AuthModule],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [TypeOrmModule],
 })
 export class UsersModule {}

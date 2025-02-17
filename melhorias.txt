@@ -116,7 +116,7 @@ Prioridades a serem feitas
   - criar testes para validar crip da senha na Dto de create user e update user -- ok
 
   - criar testes unitarios para transactions -- ok
-  - criar testes de integracao para transactions 
+  - criar testes de integracao para transactions -- ok
   - criar testes unitarios para dto de create e reversal transactions -- ok
 
   - criar testes unitarios para auth
@@ -124,11 +124,11 @@ Prioridades a serem feitas
   - criar testes unitarios para dto de login
   - criar testes para o middlewres de auth
 
-  - criar migrations em arquivo sql 
-  - padronizar tipos de dados e tamanho deles 
-  - verificar tipos se sao necessarios 
-  - instalar a extensao unaccent para o postgres
-  - configrar todos os decoratos para o sqlite
+  - criar migrations em arquivo sql -- ok
+  - padronizar tipos de dados e tamanho deles -- ok
+  - verificar tipos se sao necessarios -- ok
+  - instalar a extensao unaccent para o postgres -- ok
+  - configrar todos os decoratos para o sqlite -- ok
 
   - criar monitoramento do sistesma
   - associar com os logs que foram criados 
@@ -137,7 +137,7 @@ Prioridades a serem feitas
 
 Melhorias nao tao importantes 
 - cadastro de user 
-  - criptografar a senha na dto e nao no metodo 
+  - criptografar a senha na dto e nao no metodo -- ok
   - checkar documentacao dos metodos -- ok 
   - buscar user pelo nome 
   - verificar os dados de paginacao para ver se vem em number ou string
@@ -151,7 +151,7 @@ Melhorias nao tao importantes
   - criar teste e2e para logs
 
 - auth 
-  - verificar logica de auth e guards token 
+  - verificar logica de auth e guards token -- ok
   - verifcar docs auth -- ok
   - criar teste e2e para auth
 
@@ -180,7 +180,9 @@ Melhorias nao tao importantes
 
 - bugs identificados 
   - corrigir datas nas responses para timezone local 
-  - mudar a croptografia da senha para a dto 
+  - mudar a croptografia da senha para a dto -- ok
   - tirar o balance da response de todas as transactions
   - response com paginacao mostrar no swagger os dados de data
   - teste de integracao para encontrar uma transacao
+  - verifcar bug do refresh token
+  - verificar pq nao acho éricles na buscapor nome 

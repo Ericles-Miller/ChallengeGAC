@@ -27,7 +27,7 @@ export class TransactionReversal extends BaseEntity {
   @JoinColumn({ name: 'transactionId' })
   transaction: Transaction;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'float' })
   amount: number;
 
   constructor(transactionId: string, reason: string, amount: number) {

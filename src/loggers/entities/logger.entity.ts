@@ -8,30 +8,33 @@ export class Logger {
   @ApiProperty()
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 25 })
   @ApiProperty()
   method: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   @ApiProperty()
   url: string;
 
-  @Column()
+  @Column({ type: 'int' })
   @ApiProperty()
   statusCode: number;
 
-  @Column({ default: Date.now })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'datetime' : 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   timestamp: Date;
 
-  @Column()
+  @Column({ type: 'varchar', length: 50 })
   @ApiProperty()
   ip: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   @ApiProperty()
   level: ELoggerLevel;
 
-  @Column()
+  @Column({ type: 'int' })
   @ApiProperty()
   timeRequest: number;
 

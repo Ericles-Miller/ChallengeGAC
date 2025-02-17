@@ -15,7 +15,7 @@ export class Transaction extends BaseEntity {
   @Column({ type: 'uuid' })
   receiverId: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'float' })
   @ApiProperty()
   amount: number;
 
@@ -24,7 +24,7 @@ export class Transaction extends BaseEntity {
   status: EStatusTransactions;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 80 })
   code: string;
 
   @OneToMany(() => TransactionReversal, (transactionReversal) => transactionReversal.transaction, {

@@ -1,15 +1,15 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('revoked_tokens')
+@Entity('revokedTokens')
 export class RevokedToken {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'text' })
   token: string;
 
   @Column({
-    type: process.env.NODE_ENV === 'test' ? 'datetime' : 'timestamptz',
+    type: process.env.NODE_ENV === 'test' ? 'datetime' : 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
   revokedAt: Date;
