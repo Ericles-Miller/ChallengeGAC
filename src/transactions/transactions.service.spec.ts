@@ -152,39 +152,45 @@ describe('TransactionsService', () => {
 
   describe('findOne', () => {
     it('should return a transaction by id', async () => {
-      const id = 'transaction-id';
-      const transaction = new Transaction(100, 'receiver-id', 'sender-id', EStatusTransactions.completed);
+      const senderId = '38c2233d-93d5-4230-bb52-c5e87301011a';
+      const transaction = new Transaction(
+        100,
+        senderId,
+        'f66dc758-5fad-41a3-9d3d-136deeb0e28e',
+        EStatusTransactions.completed,
+      );
 
       jest.spyOn(transactionRepository, 'createQueryBuilder').mockReturnValue({
         leftJoinAndSelect: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
         getOne: jest.fn().mockResolvedValueOnce(transaction),
       } as any);
 
-      const result = await service.findOne(id);
+      const result = await service.findOne(transaction.id, senderId);
 
       expect(result).toEqual(transaction);
     });
 
     it('should throw NotFoundException if transaction does not exist', async () => {
       const id = 'transaction-id';
+      const senderId = '38c2233d-93d5-4230-bb52-c5e87301011a';
 
       jest.spyOn(transactionRepository, 'createQueryBuilder').mockReturnValue({
         leftJoinAndSelect: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
         getOne: jest.fn().mockResolvedValueOnce(null),
       } as any);
 
-      await expect(service.findOne(id)).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(id, senderId)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('reversal', () => {
     it('should reverse a transaction successfully', async () => {
-      const createTransactionReversalDto: CreateTransactionReversalDto = { code: 'code', reason: 'reason' };
-
       const senderId = '9b815039-1e43-4be1-84ef-71e5fad13373';
       const receiverId = '38c2233d-93d5-4230-bb52-c5e87301011a';
 
@@ -192,6 +198,10 @@ describe('TransactionsService', () => {
       sender.id = senderId;
 
       const transaction = new Transaction(100, receiverId, senderId, EStatusTransactions.completed);
+      const createTransactionReversalDto: CreateTransactionReversalDto = {
+        code: transaction.code,
+        reason: 'reason',
+      };
 
       const receiver = new User(4000, 'receiver@email.com', 'receiverName', 'password');
       receiver.id = receiverId;
@@ -209,7 +219,9 @@ describe('TransactionsService', () => {
 
       const result = await service.reversal(receiverId, createTransactionReversalDto);
 
-      expect(result).toEqual(transactionReversal);
+      expect(result.amount).toEqual(transactionReversal.amount);
+      expect(result.reason).toEqual(transactionReversal.reason);
+      expect(result.transactionId).toEqual(transactionReversal.transactionId);
       expect(queryRunner.commitTransaction).toHaveBeenCalled();
     });
 

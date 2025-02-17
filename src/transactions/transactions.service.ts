@@ -99,12 +99,13 @@ export class TransactionsService {
     }
   }
 
-  async findOne(id: string): Promise<Transaction> {
+  async findOne(id: string, senderId: string): Promise<Transaction> {
     try {
       const transaction = await this.repository
         .createQueryBuilder('transaction')
         .leftJoinAndSelect('transaction.receiver', 'receiver')
         .where('transaction.id = :id', { id })
+        .andWhere('transaction.senderId = :senderId', { senderId })
         .select([
           'transaction.id',
           'transaction.amount',
@@ -118,6 +119,7 @@ export class TransactionsService {
 
       if (!transaction) throw new NotFoundException('TransactionId does not exist');
 
+      console.log(transaction);
       return transaction;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
