@@ -119,7 +119,6 @@ export class TransactionsService {
 
       if (!transaction) throw new NotFoundException('TransactionId does not exist');
 
-      console.log(transaction);
       return transaction;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;

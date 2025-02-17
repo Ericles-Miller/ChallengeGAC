@@ -183,3 +183,4 @@ Melhorias nao tao importantes
   - mudar a croptografia da senha para a dto 
   - tirar o balance da response de todas as transactions
   - response com paginacao mostrar no swagger os dados de data
+  - teste de integracao para encontrar uma transacao

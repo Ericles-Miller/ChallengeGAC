@@ -173,14 +173,14 @@ describe('TransactionsController', () => {
   it('should return a single transaction', async () => {
     const user = await userController.create({
       email: 'test@example.com',
-      password: 'password',
+      password: '@1Wsd01q',
       name: 'Test User',
       balance: 5000,
     });
 
     const user2 = await userController.create({
       email: 'test2@example.com',
-      password: 'password',
+      password: '@1Wsd01q',
       name: 'Test User',
       balance: 5000,
     });
