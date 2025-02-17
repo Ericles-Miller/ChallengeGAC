@@ -140,13 +140,14 @@ Melhorias nao tao importantes
   - criptografar a senha na dto e nao no metodo -- ok
   - checkar documentacao dos metodos -- ok 
   - buscar user pelo nome 
-  - verificar os dados de paginacao para ver se vem em number ou string
+  - verificar os dados de paginacao para ver se vem em number ou string -- ok
 
 
 - cadastro de lgos e monitoramento 
-  - verificar metodos de logger 
+  - criar um logger no elastisearch
+  - buscar um logger ataraves do elastsearch
   - verificar as rotas que terao logs 
-  - verificar teste para nivel de logs 
+  - refactor testes de logs 
   - verificar docs logs -- ok 
   - criar teste e2e para logs
 
@@ -171,18 +172,18 @@ Melhorias nao tao importantes
   - palavras e mensagens escritas de forma errada 
   - verifcar se existem bugs 
   - verificar se esta seguindo os padroes de clean code 
-  - verificar status code de responses 
+  - verificar status code de responses -- ok
   - verifcar as respostas se existem propriedades que nao deveriam aparecer como sub id pelo nome da pessoa 
-  - vericar se os dados estao sendo salvos no banco da forma correta 
-  - verificar as datas se estao retornando de forma correta de acordo com time zone 
+  - vericar se os dados estao sendo salvos no banco da forma correta -- ok
+  - verificar as datas se estao retornando de forma correta de acordo com time zone -- ok
   - verificar nomes de arquivos e classe e funcoes se sao auto explicativos
   
 
 - bugs identificados 
-  - corrigir datas nas responses para timezone local 
+  - corrigir datas nas responses para timezone local -- ok
   - mudar a croptografia da senha para a dto -- ok
-  - tirar o balance da response de todas as transactions
-  - response com paginacao mostrar no swagger os dados de data
+  - tirar o balance da response de todas as transactions -- ok
+  - response com paginacao mostrar no swagger os dados de data -- ok
   - teste de integracao para encontrar uma transacao
   - verifcar bug do refresh token
-  - verificar pq nao acho éricles na buscapor nome 
+  - verificar pq nao acho éricles na busca por nome 

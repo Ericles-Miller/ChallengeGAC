@@ -75,7 +75,17 @@ export class TransactionsService {
       const query = this.repository
         .createQueryBuilder('transaction')
         .innerJoinAndSelect('transaction.receiver', 'receiver')
-        .where('transaction.senderId = :senderId', { senderId });
+        .where('transaction.senderId = :senderId', { senderId })
+        .select([
+          'transaction.id',
+          'transaction.amount',
+          'transaction.status',
+          'transaction.code',
+          'transaction.createdAt',
+          'transaction.updatedAt',
+          'receiver.id',
+          'receiver.name',
+        ]);
 
       if (receiverName)
         query.andWhere('unaccent(receiver.name) ILIKE :receiverName', {

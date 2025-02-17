@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/Jwt-auth-guard';
 import { Transaction } from './entities/transaction.entity';
 import { Request } from 'express';
@@ -73,8 +73,18 @@ export class TransactionsController {
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Number to page',
+    example: '1',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: ' items to page',
+    example: '10',
+  })
   @ApiQuery({ name: 'senderName', required: false, type: String })
   @ApiOperation({
     summary: 'find all transactions of user ',
@@ -89,7 +99,19 @@ export class TransactionsController {
   @ApiResponse({
     status: 200,
     description: 'list all Transactions successfully',
-    type: PaginatedListDto<Transaction[]>,
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(PaginatedListDto<Transaction[]>) },
+        {
+          properties: {
+            data: {
+              type: 'array',
+              items: { $ref: getSchemaPath(Transaction) },
+            },
+          },
+        },
+      ],
+    },
   })
   @ApiResponse({
     status: 500,

@@ -15,7 +15,15 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
 import { JwtAuthGuard } from 'src/auth/Jwt-auth-guard';
@@ -65,8 +73,18 @@ export class UsersController {
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Number to page',
+    example: '1',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: ' items to page',
+    example: '10',
+  })
   @ApiOperation({
     summary: 'find all users',
     description: `
@@ -80,7 +98,19 @@ export class UsersController {
   })
   @ApiResponse({
     status: 200,
-    type: PaginatedListDto<User[]>,
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(PaginatedListDto<User[]>) },
+        {
+          properties: {
+            data: {
+              type: 'array',
+              items: { $ref: getSchemaPath(User) },
+            },
+          },
+        },
+      ],
+    },
     description: 'Find all users with filters successfully',
   })
   @ApiResponse({
@@ -179,7 +209,7 @@ export class UsersController {
   @HttpCode(204)
   async update(@Req() request: Request, @Body() updateUserDto: UpdateUserDto): Promise<void> {
     const { userId } = request.user;
-    return await this.usersService.update(userId, updateUserDto);
+    await this.usersService.update(userId, updateUserDto);
   }
 
   @Delete('')
@@ -212,6 +242,6 @@ export class UsersController {
   @HttpCode(204)
   async remove(@Req() request: Request): Promise<void> {
     const { userId } = request.user;
-    return await this.usersService.remove(userId);
+    await this.usersService.remove(userId);
   }
 }
