@@ -168,7 +168,7 @@ Melhorias nao tao importantes
 - code review 
   - revisar pacotes se estao atualizados e sendo usados 
   - revisar se existem funcoes e variaveis sem uso 
-  - palavras e mensagens escritas de forma errada 
+  - palavras e mensagens escritas de forma errada -- ok
   - verifcar se existem bugs 
   - verificar se esta seguindo os padroes de clean code 
   - verificar status code de responses -- ok
