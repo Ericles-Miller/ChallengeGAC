@@ -115,9 +115,9 @@ Prioridades a serem feitas
   - criar testes unitarios para dto de create e update user -- ok
   - criar testes para validar crip da senha na Dto de create user e update user -- ok
 
-  - criar testes unitarios para transactions
-  - criar testes de integracao para transactions
-  - criar testes unitarios para dto de create e reversal transactions
+  - criar testes unitarios para transactions -- ok
+  - criar testes de integracao para transactions 
+  - criar testes unitarios para dto de create e reversal transactions -- ok
 
   - criar testes unitarios para auth
   - criar testes de integracao para auth
@@ -183,3 +183,4 @@ Melhorias nao tao importantes
   - mudar a croptografia da senha para a dto 
   - tirar o balance da response de todas as transactions
   - response com paginacao mostrar no swagger os dados de data
+  - teste de integracao para encontrar uma transacao
