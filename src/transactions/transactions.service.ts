@@ -68,14 +68,16 @@ export class TransactionsService {
   async findAll(
     page: number,
     limit: number,
-    senderId: string,
+    userId: string,
     receiverName: string,
   ): Promise<PaginatedListDto<Transaction[]>> {
     try {
       const query = this.repository
         .createQueryBuilder('transaction')
         .innerJoinAndSelect('transaction.receiver', 'receiver')
-        .where('transaction.senderId = :senderId', { senderId })
+        .innerJoinAndSelect('transaction.sender', 'sender')
+        .where('transaction.senderId = :userId', { userId })
+        .orWhere('transaction.receiverId = :userId', { userId })
         .select([
           'transaction.id',
           'transaction.amount',
@@ -85,10 +87,12 @@ export class TransactionsService {
           'transaction.updatedAt',
           'receiver.id',
           'receiver.name',
+          'sender.id',
+          'sender.name',
         ]);
 
       if (receiverName)
-        query.andWhere('unaccent(receiver.name) ILIKE :receiverName', {
+        query.andWhere('unaccent(receiver.name) ILIKE unaccent(:receiverName)', {
           receiverName: `%${receiverName}%`,
         });
 
@@ -104,7 +108,9 @@ export class TransactionsService {
         page,
         limit,
       };
-    } catch {
+    } catch (error) {
+      console.log(error);
+
       throw new InternalServerErrorException('Error to find all transactions');
     }
   }

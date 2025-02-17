@@ -43,7 +43,7 @@ describe('TransactionsService', () => {
               innerJoinAndSelect: jest.fn().mockReturnThis(),
               where: jest.fn().mockReturnThis(),
               select: jest.fn().mockReturnThis(),
-              andWhere: jest.fn().mockReturnThis(),
+              orWhere: jest.fn().mockReturnThis(),
               skip: jest.fn().mockReturnThis(),
               take: jest.fn().mockReturnThis(),
               orderBy: jest.fn().mockReturnThis(),
@@ -137,6 +137,7 @@ describe('TransactionsService', () => {
       jest.spyOn(transactionRepository, 'createQueryBuilder').mockReturnValue({
         innerJoinAndSelect: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),

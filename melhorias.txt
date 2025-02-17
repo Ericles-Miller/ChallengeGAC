@@ -108,6 +108,7 @@ testes a serem feitas
   - documentar comandos necessarios para executar os testes e api  -- ok
   - documentar porta para exebir os endpoints -- ok
   - verificar todas as mensagens de erro 
+  - documentar funcao de cada endpoint
 
 Prioridades a serem feitas
   - criar testes unitarios para o servico de user -- ok
@@ -131,7 +132,13 @@ Prioridades a serem feitas
   - configrar todos os decoratos para o sqlite -- ok
 
   - criar monitoramento do sistesma
-  - associar com os logs que foram criados 
+    - associar com os logs que foram criados 
+    - criar um logger no elastisearch
+    - buscar um logger ataraves do elastsearch
+    - verificar as rotas que terao logs 
+    - refactor testes de logs 
+    - verificar docs logs -- ok 
+    - criar teste e2e para logs
 
   - dockerizar o projeto
 
@@ -142,14 +149,6 @@ Melhorias nao tao importantes
   - buscar user pelo nome 
   - verificar os dados de paginacao para ver se vem em number ou string -- ok
 
-
-- cadastro de lgos e monitoramento 
-  - criar um logger no elastisearch
-  - buscar um logger ataraves do elastsearch
-  - verificar as rotas que terao logs 
-  - refactor testes de logs 
-  - verificar docs logs -- ok 
-  - criar teste e2e para logs
 
 - auth 
   - verificar logica de auth e guards token -- ok
@@ -173,7 +172,7 @@ Melhorias nao tao importantes
   - verifcar se existem bugs 
   - verificar se esta seguindo os padroes de clean code 
   - verificar status code de responses -- ok
-  - verifcar as respostas se existem propriedades que nao deveriam aparecer como sub id pelo nome da pessoa 
+  - verifcar as respostas se existem propriedades que nao deveriam aparecer como sub id pelo nome da pessoa -- ok
   - vericar se os dados estao sendo salvos no banco da forma correta -- ok
   - verificar as datas se estao retornando de forma correta de acordo com time zone -- ok
   - verificar nomes de arquivos e classe e funcoes se sao auto explicativos
@@ -186,4 +185,5 @@ Melhorias nao tao importantes
   - response com paginacao mostrar no swagger os dados de data -- ok
   - teste de integracao para encontrar uma transacao
   - verifcar bug do refresh token
-  - verificar pq nao acho éricles na busca por nome 
+  - verificar pq nao acho éricles na busca por nome -- OK
+  - criar uma novo endpoint para o receiverId (estrato) -- ok 
