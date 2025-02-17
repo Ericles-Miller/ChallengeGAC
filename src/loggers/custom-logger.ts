@@ -78,10 +78,10 @@ export class CustomLogger implements LoggerService {
       }
 
       const contexts = contextPart.split(',');
-      const numericLevel = this.LOG_LEVEL_MAP[levelPart.trim()] ?? this.LOG_LEVEL_MAP[this.DEFAULT_LEVEL];
+      const floatLevel = this.LOG_LEVEL_MAP[levelPart.trim()] ?? this.LOG_LEVEL_MAP[this.DEFAULT_LEVEL];
 
       for (const context of contexts) {
-        CustomLogger.contextRules[context.trim()] = numericLevel;
+        CustomLogger.contextRules[context.trim()] = floatLevel;
       }
     }
   }

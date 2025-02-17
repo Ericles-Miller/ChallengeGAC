@@ -7,7 +7,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(2)
-  @MaxLength(80)
+  @MaxLength(235)
   name: string;
 
   @ApiProperty({ type: String, required: true, example: 'john@example.com' })
@@ -20,7 +20,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
-  @MaxLength(20)
+  @MaxLength(25)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message:
       'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character',
