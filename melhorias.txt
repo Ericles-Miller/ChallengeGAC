@@ -146,7 +146,7 @@ Melhorias nao tao importantes
 - cadastro de user 
   - criptografar a senha na dto e nao no metodo -- ok
   - checkar documentacao dos metodos -- ok 
-  - buscar user pelo nome 
+  - buscar user pelo nome -- ok
   - verificar os dados de paginacao para ver se vem em number ou string -- ok
 
 
@@ -168,7 +168,7 @@ Melhorias nao tao importantes
 - code review 
   - revisar pacotes se estao atualizados e sendo usados 
   - revisar se existem funcoes e variaveis sem uso 
-  - palavras e mensagens escritas de forma errada 
+  - palavras e mensagens escritas de forma errada -- ok
   - verifcar se existem bugs 
   - verificar se esta seguindo os padroes de clean code 
   - verificar status code de responses -- ok
@@ -184,6 +184,6 @@ Melhorias nao tao importantes
   - tirar o balance da response de todas as transactions -- ok
   - response com paginacao mostrar no swagger os dados de data -- ok
   - teste de integracao para encontrar uma transacao
-  - verifcar bug do refresh token
+  - verifcar bug do refresh token -- ok
   - verificar pq nao acho éricles na busca por nome -- OK
   - criar uma novo endpoint para o receiverId (estrato) -- ok 

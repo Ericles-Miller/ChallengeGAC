@@ -59,7 +59,7 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     type: TokenAccessDto,
-    description: `create refresh token successfully`,
+    description: `Create refresh token successfully`,
   })
   @ApiResponse({
     status: 500,
@@ -67,7 +67,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 400,
-    description: 'bad request to send data',
+    description: 'Bad Request',
   })
   @ApiResponse({
     status: 401,
@@ -102,7 +102,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 400,
-    description: 'bad request to send data',
+    description: 'Bad request',
   })
   @ApiResponse({
     status: 401,

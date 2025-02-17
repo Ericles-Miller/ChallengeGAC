@@ -12,7 +12,15 @@ import {
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExtraModels,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/Jwt-auth-guard';
 import { Transaction } from './entities/transaction.entity';
 import { Request } from 'express';
@@ -27,7 +35,7 @@ export class TransactionsController {
 
   @Post()
   @ApiOperation({
-    summary: 'create transaction',
+    summary: 'This endpoint is used to make transactions worth value to another user',
     description: `
     sample request: create transaction
     Post /transactions
@@ -87,7 +95,7 @@ export class TransactionsController {
   })
   @ApiQuery({ name: 'senderName', required: false, type: String })
   @ApiOperation({
-    summary: 'find all transactions of user ',
+    summary: 'Find the statement of transactions made and received by the user',
     description: `
     sample request: find all transactions by name sender paginated
     Get /transactions/?page=3&limit=5&senderName=John
@@ -98,7 +106,7 @@ export class TransactionsController {
   })
   @ApiResponse({
     status: 200,
-    description: 'list all Transactions successfully',
+    description: 'List all Transactions successfully',
     schema: {
       allOf: [
         { $ref: getSchemaPath(PaginatedListDto<Transaction[]>) },
@@ -121,6 +129,7 @@ export class TransactionsController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiExtraModels(PaginatedListDto, Transaction)
   async findAll(
     @Req() request: Request,
     @Query('page') page?: string,
@@ -140,7 +149,7 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
-    summary: 'find transaction by id',
+    summary: 'Find transaction by id',
     description: `
     sample request: find transaction by id
     Get /transactions/fec9f1f7-ccdf-414a-81c6-687fc32542d7
@@ -148,7 +157,7 @@ export class TransactionsController {
   })
   @ApiResponse({
     status: 200,
-    description: 'list all Transactions successfully',
+    description: 'List all Transactions successfully',
     type: Transaction,
   })
   @ApiResponse({
@@ -173,7 +182,7 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
-    summary: 'transaction reversal',
+    summary: 'Reverse a transaction that was received by the user',
     description: `
     sample request: 
     Post /transactions/reversal 
@@ -185,7 +194,7 @@ export class TransactionsController {
   })
   @ApiResponse({
     status: 201,
-    description: 'transaction reversal create successfully',
+    description: 'Transaction reversal create successfully',
     type: TransactionReversal,
   })
   @ApiResponse({

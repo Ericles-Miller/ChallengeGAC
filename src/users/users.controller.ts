@@ -18,6 +18,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiExtraModels,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -37,7 +38,7 @@ export class UsersController {
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
-    summary: 'create new user',
+    summary: 'Create new user',
     description: `
     sample request: 
     POST /users
@@ -61,7 +62,7 @@ export class UsersController {
   })
   @ApiResponse({
     status: 400,
-    description: 'bad request',
+    description: 'Bad request',
   })
   @ApiResponse({
     status: 401,
@@ -82,18 +83,29 @@ export class UsersController {
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: ' items to page',
+    description: 'Items to page',
     example: '10',
   })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'name of user',
+    example: 'John Doe',
+  })
   @ApiOperation({
-    summary: 'find all users',
+    summary: 'Find all users. This endpoint is used to help the user find other users in the API',
     description: `
-    This endpoint is used to help the user find other users in the API
-    sample request: find users paginated default
+    sample request: find users paginated default and by name of user
+    Get /users?page=1&limit=10&name=John
+
+    sample request: find users paginated not default by name of user
+    Get /users?page=3&limit=5&name=John
+
+    sample request: find users not paginated default
     Get /users?page=1&limit=10
 
-    sample request: find users paginated not default
-    Get /users?page=3&limit=5
+    sample request: find user not paginated default 
+    Get /users?page=1&limit=10
     `,
   })
   @ApiResponse({
@@ -121,14 +133,16 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiExtraModels(PaginatedListDto, User)
   async findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('name') name?: string,
   ): Promise<PaginatedListDto<User[]>> {
     const pageNumber = Number(page) > 0 ? Number(page) : 1;
     const limitNumber = Number(limit) > 0 ? Number(limit) : 10;
 
-    return await this.usersService.findAll(pageNumber, limitNumber);
+    return await this.usersService.findAll(pageNumber, limitNumber, name);
   }
 
   @Get('/find-your-user')
@@ -136,7 +150,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
-    summary: 'find info of your user',
+    summary: 'Find info of user',
     description: `
     sample request: find user with id
     Get /user/find-your-user
@@ -144,7 +158,7 @@ export class UsersController {
   })
   @ApiResponse({
     status: 404,
-    description: 'not found',
+    description: 'Not found',
   })
   @ApiResponse({
     status: 200,
@@ -225,7 +239,7 @@ export class UsersController {
   })
   @ApiResponse({
     status: 404,
-    description: 'userId does not exists',
+    description: 'Not found',
   })
   @ApiResponse({
     status: 204,

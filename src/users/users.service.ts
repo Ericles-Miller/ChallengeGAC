@@ -32,9 +32,10 @@ export class UsersService {
     }
   }
 
-  async findAll(page: number, limit: number): Promise<PaginatedListDto<User[]>> {
+  async findAll(page: number, limit: number, name?: string): Promise<PaginatedListDto<User[]>> {
     try {
       const [users, total] = await this.usersRepository.findAndCount({
+        where: { name: name ? name : undefined },
         take: limit,
         skip: (page - 1) * limit,
       });
@@ -46,7 +47,7 @@ export class UsersService {
         limit: Math.ceil(total / limit),
       };
     } catch {
-      throw new InternalServerErrorException('Internal server error finding movies');
+      throw new InternalServerErrorException('Internal server error finding transactions');
     }
   }
 
@@ -60,7 +61,7 @@ export class UsersService {
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
 
-      throw new InternalServerErrorException('Unexpected server error to find user');
+      throw new InternalServerErrorException('Internal server error to find user');
     }
   }
 
@@ -80,7 +81,7 @@ export class UsersService {
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof BadRequestException) throw error;
 
-      throw new InternalServerErrorException('Unexpected server error to update user');
+      throw new InternalServerErrorException('Internal server error to update user');
     }
   }
 
@@ -94,7 +95,7 @@ export class UsersService {
     } catch (error) {
       if (error instanceof BadRequestException || error instanceof NotFoundException) throw error;
 
-      throw new InternalServerErrorException('Unexpected server error to delete user');
+      throw new InternalServerErrorException('Internal server error to delete user');
     }
   }
 }
