@@ -6,6 +6,7 @@ import { LoggerController } from './logger.controller';
 import { LoggerMiddleware } from './logger-middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Logger } from './entities/logger.entity';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Module({
   imports: [
@@ -13,8 +14,21 @@ import { Logger } from './entities/logger.entity';
     LoggerModule.forRoot({ pinoHttp: { level: 'trace', autoLogging: false } }),
   ],
   controllers: [LoggerController],
-  providers: [LoggerService, CustomLogger],
-  exports: [CustomLogger],
+  providers: [
+    LoggerService,
+    CustomLogger,
+    {
+      provide: 'ELASTICSEARCH',
+      useFactory: async () => {
+        const { Client } = require('@elastic/elasticsearch');
+        return new Client({
+          node: 'http://localhost:9200', // URL do seu cluster Elasticsearch
+        });
+      },
+    },
+    ElasticsearchService,
+  ],
+  exports: [CustomLogger, ElasticsearchService],
 })
 export class LoggersModule {
   configure(consumer: MiddlewareConsumer) {

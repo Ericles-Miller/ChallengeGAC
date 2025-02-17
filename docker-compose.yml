@@ -18,6 +18,45 @@ services:
     networks:
       - mynetwork
 
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: nest-pgadmin4
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+    ports: 
+      - "8080:80"
+    volumes: 
+      - ./pgadmin-data:/var/lib/pgadmin
+    depends_on: 
+      - db
+    networks:
+      - mynetwork
+
+  elasticsearch01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    container_name: elasticsearch01
+    ports: 
+      - 9200:9200
+      - 9300:9300
+    environment:
+      discovery.type: single-node
+    networks:
+      - elastic
+  
+  kibana01:
+    image: docker.elastic.co/kibana/kibana:7.9.2
+    container_name: kibana01
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch01:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch01:9200
+    networks:
+      - elastic
+
   # app:
   #   build: .
   #   container_name: myApp
@@ -29,7 +68,7 @@ services:
   #     DATABASE_PASSWORD: ${DATABASE_PASSWORD}
   #     DATABASE_NAME: ${DATABASE_NAME}
   #   ports:
-  #     - "${PORT}" 
+  #     - "${PORT}:3000"
   #   depends_on:
   #     - db
   #   command: sh -c "sleep 10 && yarn start:dev" 
@@ -38,6 +77,12 @@ services:
 
 networks:
   mynetwork:
+    driver: bridge
+  elastic:
+    driver: bridge
 
 volumes:
   pgdata:
+  pgadmin-data:
+  pgfile:
+  esData01:

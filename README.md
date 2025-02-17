@@ -53,6 +53,12 @@ $ yarn run test:cov
 
 ## Compile e execute o projeto
 
+para executar o logstash execute o comando abaixo:
+logstash -f logstash.conf
+
+Acesse o Kibana através do seu navegador (normalmente http://localhost:5601).
+
+
 ```bash
 # development
 $ yarn run start
