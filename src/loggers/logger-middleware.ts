@@ -3,13 +3,13 @@ import { Request, Response, NextFunction } from 'express';
 import { differenceInMilliseconds } from 'date-fns';
 import { CustomLogger } from './custom-logger';
 import { ELoggerLevel } from './logger-level.enum';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { v4 as uuid } from 'uuid';
+import { LoggerService } from './logger.service';
+
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   constructor(
     private readonly customLogger: CustomLogger,
-    private readonly elasticsearchService: ElasticsearchService,
+    private readonly logsService: LoggerService,
   ) {}
 
   async use(request: Request, response: Response, next: NextFunction): Promise<void> {
@@ -23,18 +23,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const level =
         statusCode >= 500 ? ELoggerLevel.ERROR : statusCode >= 400 ? ELoggerLevel.WARN : ELoggerLevel.INFO;
 
-      this.elasticsearchService.index({
-        index: 'logs',
-        id: uuid(),
-        document: {
-          method,
-          originalUrl,
-          statusCode,
-          timeRequest,
-          ip,
-          level,
-        },
-      });
+      this.logsService.logRequest(method, originalUrl, statusCode, ip, level, timeRequest);
 
       if (level === ELoggerLevel.ERROR) {
         this.customLogger.error(
