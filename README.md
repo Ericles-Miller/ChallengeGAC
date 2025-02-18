@@ -25,7 +25,12 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Setup  do projeto- Instale as dependências
+## Setup do projeto- Instale as dependências
+
+Obs: Certifque-se de ter o node instalado em sua máquina e nestjs. Para instalar o nestjs, execute o seguinte comando: npm i -g @nestjs/cli
+
+Acesse a branch main no projeto e execute o comando abaixo para instalar as dependências do projeto:
+
 
 ```bash
 $ yarn install
@@ -34,6 +39,8 @@ $ yarn install
 ## Intruções
 
 1- para configurar o projeto cria um arquivo .env na raiz do projeto e coloque as seguintes variáveis de ambiente presentes no arquivo .env.example:
+
+obs: há um arquivo init.sql na raiz do projeto com o nome do banco de dados já configurado. Caso querira definir outro nome para o banco de dados, altere o nome do banco de dados no arquivo init.sql também.
 
 
 ## Run tests
@@ -65,13 +72,14 @@ $ yarn run start:prod
 
 ```
 
+## Acessando os endpoints pelo swagger
+Acesse o endereco: http://localhost:{port}/api para visualizar a documentação do swagger
+
+OBS: para acessar o swagger é necessario que a variável de ambiente NODE_ENV esteja em modo de development.
+
+
 ## executando com docker 
 execute o comando abaixo para subir o container
 ```bash 
 docker-compose up -d 
 ```
-
-## Acessando os endpoints pelo swagger
-Acesse o endereco http://localhost:{port}/api para visualizar a documentação do swagger
-
-OBS: para acessar o swagger é necessario que a variável de ambiente NODE_ENV esteja em modo de desenvolvimento.
