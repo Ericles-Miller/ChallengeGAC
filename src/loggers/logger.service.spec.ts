@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerService } from './logger.service';
 import { Logger } from './entities/logger.entity';
-import { Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { ELoggerLevel } from './logger-level.enum';
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 describe('LoggerService', () => {
   let service: LoggerService;
-  let repository: Repository<Logger>;
+  let elasticsearchService: ElasticsearchService;
 
   const loggers: Logger[] = [
     {
@@ -23,10 +22,11 @@ describe('LoggerService', () => {
     },
   ];
 
-  const mockRepository = {
-    findOne: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
+  const mockElastic = {
+    index: jest.fn(),
+    get: jest.fn(),
+    search: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -34,20 +34,19 @@ describe('LoggerService', () => {
       providers: [
         LoggerService,
         {
-          provide: getRepositoryToken(Logger),
-          useValue: mockRepository,
+          provide: ElasticsearchService,
+          useValue: mockElastic,
         },
       ],
     }).compile();
 
     service = module.get<LoggerService>(LoggerService);
-    repository = module.get<Repository<Logger>>(getRepositoryToken(Logger));
-    mockRepository.save.mockClear();
+    elasticsearchService = module.get<ElasticsearchService>(ElasticsearchService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-    expect(repository).toBeDefined();
+    expect(elasticsearchService).toBeDefined();
   });
 
   describe('suite tests logRequest', () => {
@@ -63,7 +62,7 @@ describe('LoggerService', () => {
 
       await service.logRequest(log.method, log.url, log.statusCode, log.ip, log.level, log.timeRequest);
 
-      expect(repository.save).toHaveBeenCalledTimes(1);
+      expect(elasticsearchService.index).toHaveBeenCalledTimes(1);
       expect(log.level).toBe(ELoggerLevel.INFO);
     });
 
@@ -80,7 +79,7 @@ describe('LoggerService', () => {
 
       await service.logRequest(log.method, log.url, log.statusCode, log.ip, log.level, log.timeRequest);
 
-      expect(repository.save).toHaveBeenCalledTimes(1);
+      expect(elasticsearchService.index).toHaveBeenCalledTimes(1);
       expect(log.level).toBe(ELoggerLevel.WARN);
     });
 
@@ -96,12 +95,12 @@ describe('LoggerService', () => {
 
       await service.logRequest(log.method, log.url, log.statusCode, log.ip, log.level, log.timeRequest);
 
-      expect(repository.save).toHaveBeenCalledTimes(1);
+      expect(elasticsearchService.index).toHaveBeenCalledTimes(1);
       expect(log.level).toBe(ELoggerLevel.ERROR);
     });
 
     it('should throw InternalServerErrorException on unexpected error', async () => {
-      jest.spyOn(repository, 'save').mockRejectedValue(new Error('Error saving log'));
+      jest.spyOn(elasticsearchService, 'index').mockRejectedValue(new Error('Error saving log'));
       const log = {
         method: 'GET',
         url: 'http://localhost:3000/logs',
@@ -119,15 +118,15 @@ describe('LoggerService', () => {
 
   describe('suit tests getLogs', () => {
     it('should be able to get all logs', async () => {
-      jest.spyOn(repository, 'find').mockResolvedValue(loggers);
+      jest.spyOn(elasticsearchService, 'search').mockResolvedValue(any);
       const result = await service.getLogs();
 
       expect(result).toEqual(loggers);
-      expect(repository.find).toHaveBeenCalledTimes(1);
+      expect(elasticsearchService.search).toHaveBeenCalledTimes(1);
     });
 
     it('should throw InternalServerErrorException on unexpected error', async () => {
-      jest.spyOn(repository, 'find').mockRejectedValue(new Error('Error finding log  '));
+      jest.spyOn(elasticsearchService, 'search').mockRejectedValue(new Error('Error finding log'));
 
       await expect(service.getLogs()).rejects.toThrow(InternalServerErrorException);
     });
@@ -146,16 +145,16 @@ describe('LoggerService', () => {
         timestamp: new Date(),
       };
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(log);
+      jest.spyOn(elasticsearchService, 'get').mockResolvedValue();
 
       const result = await service.findLog('335ecab5-4e51-4bfe-9e3b-4dd115e7a47b');
 
-      expect(result).toEqual(log);
-      expect(repository.findOne).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(any);
+      expect(elasticsearchService.get).toHaveBeenCalledTimes(1);
     });
 
     it('should throw NotFoundException on unexpected error', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(elasticsearchService, 'get').mockResolvedValue(undefined);
 
       await expect(service.findLog('335ecab5-4e51-4bfe-9e3b-4dd115e7a47b')).rejects.toThrow(
         NotFoundException,

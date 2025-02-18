@@ -36,6 +36,7 @@ export class TransactionsService {
 
       const receiver = await queryRunner.manager.findOne(User, { where: { id: receiverId } });
       if (!receiver) throw new NotFoundException('ReceiverId does not exist');
+      if (!receiver.isActive) throw new BadRequestException('Receiver is not active');
       if (sender.id === receiver.id) throw new BadRequestException('Sender and Receiver cannot be the same');
 
       sender.balance -= amount;
@@ -68,17 +69,31 @@ export class TransactionsService {
   async findAll(
     page: number,
     limit: number,
-    senderId: string,
+    userId: string,
     receiverName: string,
   ): Promise<PaginatedListDto<Transaction[]>> {
     try {
       const query = this.repository
         .createQueryBuilder('transaction')
         .innerJoinAndSelect('transaction.receiver', 'receiver')
-        .where('transaction.senderId = :senderId', { senderId });
+        .innerJoinAndSelect('transaction.sender', 'sender')
+        .where('transaction.senderId = :userId', { userId })
+        .orWhere('transaction.receiverId = :userId', { userId })
+        .select([
+          'transaction.id',
+          'transaction.amount',
+          'transaction.status',
+          'transaction.code',
+          'transaction.createdAt',
+          'transaction.updatedAt',
+          'receiver.id',
+          'receiver.name',
+          'sender.id',
+          'sender.name',
+        ]);
 
       if (receiverName)
-        query.andWhere('unaccent(receiver.name) ILIKE :receiverName', {
+        query.andWhere('unaccent(receiver.name) ILIKE unaccent(:receiverName)', {
           receiverName: `%${receiverName}%`,
         });
 
@@ -94,7 +109,9 @@ export class TransactionsService {
         page,
         limit,
       };
-    } catch {
+    } catch (error) {
+      console.log(error);
+
       throw new InternalServerErrorException('Error to find all transactions');
     }
   }

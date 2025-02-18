@@ -320,7 +320,7 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@elastic/elasticsearch@8.17.0", "@elastic/elasticsearch@^8.13.1":
+"@elastic/elasticsearch@^8.13.1", "@elastic/elasticsearch@^8.17.0":
   version "8.17.0"
   resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-8.17.0.tgz#0214265bc04a3fe0d23a410b8d08b28217aac540"
   integrity sha512-FZ+gQUrPsMpQ2RRIXwTmCoUeFCEausMhp4eQOyxT9j1cwGXHJrhelR6jffM1SC95kQUkB7+TcTq7oQ+bG2BQ9g==
@@ -2282,6 +2282,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+date-fns-tz@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/date-fns-tz/-/date-fns-tz-3.2.0.tgz#647dc56d38ac33a3e37b65e9d5c4cda5af5e58e6"
+  integrity sha512-sg8HqoTEulcbbbVXeg84u5UnlsQa8GS5QXMqjjYIhS4abEVVKIUwe0/l/UhrZdKaL/W5eWZNlbTeEIiOXTcsBQ==
 
 date-fns@^4.1.0:
   version "4.1.0"

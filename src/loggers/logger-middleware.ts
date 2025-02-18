@@ -8,8 +8,8 @@ import { LoggerService } from './logger.service';
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   constructor(
-    private readonly customLogger: CustomLogger,
     private readonly logsService: LoggerService,
+    private readonly customLogger: CustomLogger,
   ) {}
 
   async use(request: Request, response: Response, next: NextFunction): Promise<void> {

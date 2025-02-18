@@ -58,6 +58,29 @@ services:
   #   command: sh -c "sleep 10 && yarn start:dev" 
   #   networks:
   #     - mynetwork
+  app:
+    build: .
+    container_name: myApp
+    restart: always
+    environment:
+      DATABASE_HOST: ${DATABASE_HOST} 
+      DATABASE_PORT: ${DATABASE_PORT} 
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      LOG_RULES: ${LOG_RULES}
+      JWT_TOKEN_SECRET: ${JWT_TOKEN_SECRET}
+      JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
+      CHAR_CODE: ${CHAR_CODE}
+    ports:
+      - "${PORT}:${PORT}" 
+    depends_on:
+      - db
+    command: sh -c "sleep 10 && yarn start:dev" 
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:

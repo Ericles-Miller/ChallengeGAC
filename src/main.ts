@@ -15,7 +15,7 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Suit Docs Challenge Adriano Cobbucio')
+    .setTitle('Suit Docs Challenge Grupo Adriano Cobbucio')
     .setDescription('')
     .setVersion('1.0')
     .addBearerAuth(

@@ -1,6 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { ELoggerLevel } from '../logger-level.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { format, toZonedTime } from 'date-fns-tz';
 
 @Entity('logs')
 export class Logger {
@@ -23,6 +25,11 @@ export class Logger {
   @Column({
     type: process.env.NODE_ENV === 'test' ? 'datetime' : 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
+  })
+  @Transform(({ value }) => {
+    const timeZone = 'America/Sao_Paulo';
+    const zonedDate = toZonedTime(value, timeZone);
+    return format(zonedDate, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone });
   })
   timestamp: Date;
 

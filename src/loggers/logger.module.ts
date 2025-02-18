@@ -7,6 +7,8 @@ import { LoggerMiddleware } from './logger-middleware';
 import 'dotenv/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Logger } from './entities/logger.entity';
+import { ElasticsearchProvider } from './elastic-search.provider';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Module({
   imports: [
