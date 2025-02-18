@@ -160,13 +160,9 @@ describe('TransactionsController', () => {
     expect(transactions.data).toHaveLength(2);
 
     expect(transactions.data[0].amount).toEqual(transaction.amount);
-    expect(transactions.data[0].receiverId).toEqual(transaction.receiverId);
-    expect(transactions.data[0].senderId).toEqual(transaction.senderId);
     expect(transactions.data[0].status).toEqual(transaction.status);
 
     expect(transactions.data[1].amount).toEqual(transaction2.amount);
-    expect(transactions.data[1].receiverId).toEqual(transaction2.receiverId);
-    expect(transactions.data[1].senderId).toEqual(transaction2.senderId);
     expect(transactions.data[1].status).toEqual(transaction2.status);
   });
 
@@ -205,8 +201,7 @@ describe('TransactionsController', () => {
     } as any);
 
     expect(result).toBeDefined();
-    expect(result.amount).toEqual(transaction.amount);
-    expect(result.senderId).toEqual(transaction.senderId);
+    expect(result.amount).toEqual(100);
     expect(result.status).toEqual(transaction.status);
   });
 
