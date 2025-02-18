@@ -36,6 +36,7 @@ export class TransactionsService {
 
       const receiver = await queryRunner.manager.findOne(User, { where: { id: receiverId } });
       if (!receiver) throw new NotFoundException('ReceiverId does not exist');
+      if (!receiver.isActive) throw new BadRequestException('Receiver is not active');
       if (sender.id === receiver.id) throw new BadRequestException('Sender and Receiver cannot be the same');
 
       sender.balance -= amount;
