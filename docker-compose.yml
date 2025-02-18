@@ -35,7 +35,7 @@ services:
       JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
       CHAR_CODE: ${CHAR_CODE}
     ports:
-      - "${PORT}" 
+      - "${PORT}:${PORT}" 
     depends_on:
       - db
     command: sh -c "sleep 10 && yarn start:dev" 
