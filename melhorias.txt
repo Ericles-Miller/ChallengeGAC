@@ -40,23 +40,23 @@ testes a serem feitas
 
  - testar o funcionamento dos endpoints de auth
   - logar um user 
-    - verificar se o email e a senha sao validos
-    - verificar se o user existe
-    - verificar se o token foi gerado
-    - verifcar erro de senha e de login 
+    - verificar se o email e a senha sao validos -- ok
+    - verificar se o user existe --ok 
+    - verificar se o token foi gerado -- ok
+    - verifcar erro de senha e de login  -- ok
 
   - refresh token
-    - verificar se o refreshToken é valido
-    - verificar se o token foi gerado
-    - verificar se o refresh token foi gerado
-    - verificar se o token e o refresh token sao validos
+    - verificar se o refreshToken é valido -- ok
+    - verificar se o token foi gerado -- ok
+    - verificar se o refresh token foi gerado -- ok 
+    - verificar se o token e o refresh token sao validos  -- ok
 
   - logout 
-   - verificar se o logout foi feito
+   - verificar se o logout foi feito -- ok
    - verificar se o token foi invalidado
-   - verificar se o refresh token foi invalidado
-   - verifcar se consigo acessar a api novamente 
-   - tentar fazer um novo logout 
+   - verificar se o refresh token foi invalidado 
+   - verifcar se consigo acessar a api novamente  -- ok
+   - tentar fazer um novo logout -- ok
   
 
  - testar o funcionamento dos endpoints de transactions
@@ -72,31 +72,31 @@ testes a serem feitas
    - vericar se o valor minimo foi de 0.01 centavos
 
   - listar transacoes de um cliente 
-    - verficar se esses dados retornados sao do usuario logado
-    - vericcar se o usuario logado tem acesso a essas transacoes
-    - verificar se ele buscar um user pelo nome e é retornado esse user
-    - verificar se a paginacao esta funcionando
-    - vericar a busca por nome: ex: joao JOAO JOÃO joão Ericles Éricles ERICLES éRICLES ÉRICLES 
+    - verficar se esses dados retornados sao do usuario logado -- ok
+    - vericcar se o usuario logado tem acesso a essas transacoes -- ok
+    - verificar se ele buscar um user pelo nome e é retornado esse user --ok 
+    - verificar se a paginacao esta funcionando 
+    - vericar a busca por nome: ex: joao JOAO JOÃO joão Ericles Éricles ERICLES éRICLES ÉRICLES -- ok
     - buscar dados de outra pagina 
 
-  - listar uma transacao pelo id
-    - verificar se o id é valido
-    - verificar se consigo buscar uma transacao de um user que nao sou eu 
-    - verificar para quem foi enviado o dinheiro
-    -verificar a data de envio da transacao 
-    - verificar se o valor esta certo 
+  - listar uma transacao pelo id -- ok 
+    - verificar se o id é valido -- ok 
+    - verificar se nao consigo buscar uma transacao de um user que nao sou eu -- ok
+    - verificar para quem foi enviado o dinheiro -- ok
+    -verificar a data de envio da transacao -- ok
+    - verificar se o valor esta certo -- ok
 
   - reverter uma transacao
-    - verificar se o codigo e valido e pertence a esse usuario
-    - verificar se o user que recebeu o dinheiero possui saldo suficiente para reverter a transacao
-    - tentar reverter uma transacao que nao existe
-    - tentar reverter uma transacao que ja foi revertida
-    - verificar se o saldo foi atualizado
-    - verificar se o status da transacao foi alterado
-    - verificar se o valor foi devolvido ao remetente
-    - verificar se o valor foi debitado do destinatario
-    - verificar se o status da transacao foi alterado
-    - tnetar reverter uma transacao que nao pertence ao usuario logado
+    - verificar se o codigo e valido e pertence a esse usuario -- ok
+    - verificar se o user que recebeu o dinheiero possui saldo suficiente para reverter a transacao -- ok
+    - tentar reverter uma transacao que nao existe -- ok
+    - tentar reverter uma transacao que ja foi revertida -- ok
+    - verificar se o saldo foi atualizado -- ok
+    - verificar se o status da transacao foi alterado -- ok
+    - verificar se o valor foi devolvido ao remetente -- ok
+    - verificar se o valor foi debitado do destinatario -- ok
+    - verificar se o status da transacao foi alterado -- ok
+    - tnetar reverter uma transacao que nao pertence ao usuario logado  -- ok
 
   Teste de docuentacao 
   - documentacao da api readme -- ok 
@@ -107,8 +107,8 @@ testes a serem feitas
   - documentar funcionamento da api -- ok
   - documentar comandos necessarios para executar os testes e api  -- ok
   - documentar porta para exebir os endpoints -- ok
-  - verificar todas as mensagens de erro 
-  - documentar funcao de cada endpoint
+  - verificar todas as mensagens de erro -- ok
+  - documentar funcao de cada endpoint -- ok
 
 Prioridades a serem feitas
   - criar testes unitarios para o servico de user -- ok
