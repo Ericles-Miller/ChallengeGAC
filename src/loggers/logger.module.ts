@@ -4,12 +4,15 @@ import { LoggerModule } from 'nestjs-pino';
 import { CustomLogger } from './custom-logger';
 import { LoggerController } from './logger.controller';
 import { LoggerMiddleware } from './logger-middleware';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
 import 'dotenv/config';
-import { ElasticsearchProvider } from './elastic-search.provider';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Logger } from './entities/logger.entity';
 
 @Module({
-  imports: [LoggerModule.forRoot({ pinoHttp: { level: 'trace', autoLogging: false } })],
+  imports: [
+    LoggerModule.forRoot({ pinoHttp: { level: 'trace', autoLogging: false } }),
+    TypeOrmModule.forFeature([Logger]),
+  ],
   controllers: [LoggerController],
   providers: [LoggerService, CustomLogger, ElasticsearchProvider, ElasticsearchService],
   exports: [CustomLogger, ElasticsearchProvider],
