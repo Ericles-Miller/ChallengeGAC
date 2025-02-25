@@ -18,46 +18,57 @@ services:
     networks:
       - mynetwork
 
-  elasticsearch01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.7
-    container_name: elasticsearch01
-    ports: 
-      - 9200:9200
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    container_name: elasticsearch
     environment:
       - discovery.type=single-node
-      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
-      - ELASTIC_USERNAME=${ELASTICSEARCH_USERNAME}     
-    networks:
-      - elastic
-  
-  kibana01:
-    image: docker.elastic.co/kibana/kibana:7.9.2
-    container_name: kibana01
+      - xpack.security.enabled=false  
     ports:
-      - 5601:5601
-    environment:
-      ELASTICSEARCH_URL: http://elasticsearch01:9200
-      ELASTICSEARCH_HOSTS: http://elasticsearch01:9200
+      - "9200:9200"
     networks:
-      - elastic
+      - elk
 
-  # app:
-  #   build: .
-  #   container_name: myApp
-  #   restart: always
-  #   environment:
-  #     DATABASE_HOST: ${DATABASE_HOST} 
-  #     DATABASE_PORT: ${DATABASE_PORT} 
-  #     DATABASE_USERNAME: ${DATABASE_USERNAME}
-  #     DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-  #     DATABASE_NAME: ${DATABASE_NAME}
-  #   ports:
-  #     - "${PORT}:3000"
-  #   depends_on:
-  #     - db
-  #   command: sh -c "sleep 10 && yarn start:dev" 
-  #   networks:
-  #     - mynetwork
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.6.2
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5044:5044"  
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.6.2
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.6.2
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    depends_on:
+      - logstash
+      - elasticsearch
+      - kibana
+    networks:
+      - elk
+
   app:
     build: .
     container_name: myApp
@@ -85,7 +96,7 @@ services:
 networks:
   mynetwork:
     driver: bridge
-  elastic:
+  elk:
     driver: bridge
 
 volumes:

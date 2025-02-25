@@ -5,19 +5,12 @@ import { CustomLogger } from './custom-logger';
 import { LoggerController } from './logger.controller';
 import { LoggerMiddleware } from './logger-middleware';
 import 'dotenv/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Logger } from './entities/logger.entity';
-import { ElasticsearchProvider } from './elastic-search.provider';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Module({
-  imports: [
-    LoggerModule.forRoot({ pinoHttp: { level: 'trace', autoLogging: false } }),
-    TypeOrmModule.forFeature([Logger]),
-  ],
+  imports: [LoggerModule.forRoot({ pinoHttp: { level: 'trace', autoLogging: false } })],
   controllers: [LoggerController],
-  providers: [LoggerService, CustomLogger, ElasticsearchProvider, ElasticsearchService],
-  exports: [CustomLogger, ElasticsearchProvider],
+  providers: [LoggerService, CustomLogger],
+  exports: [CustomLogger],
 })
 export class LoggersModule {
   configure(consumer: MiddlewareConsumer) {
