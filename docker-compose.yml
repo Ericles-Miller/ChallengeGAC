@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15.3-alpine
@@ -19,7 +17,7 @@ services:
       - mynetwork
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.16.4
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -69,29 +67,29 @@ services:
     networks:
       - elk
 
-  app:
-    build: .
-    container_name: myApp
-    restart: always
-    environment:
-      DATABASE_HOST: ${DATABASE_HOST} 
-      DATABASE_PORT: ${DATABASE_PORT} 
-      DATABASE_USERNAME: ${DATABASE_USERNAME}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_NAME: ${DATABASE_NAME}
-      PORT: ${PORT}
-      NODE_ENV: ${NODE_ENV}
-      LOG_RULES: ${LOG_RULES}
-      JWT_TOKEN_SECRET: ${JWT_TOKEN_SECRET}
-      JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
-      CHAR_CODE: ${CHAR_CODE}
-    ports:
-      - "${PORT}:${PORT}" 
-    depends_on:
-      - db
-    command: sh -c "sleep 10 && yarn start:dev" 
-    networks:
-      - mynetwork
+  # app:
+  #   build: .
+  #   container_name: myApp
+  #   restart: always
+  #   environment:
+  #     DATABASE_HOST: ${DATABASE_HOST} 
+  #     DATABASE_PORT: ${DATABASE_PORT} 
+  #     DATABASE_USERNAME: ${DATABASE_USERNAME}
+  #     DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+  #     DATABASE_NAME: ${DATABASE_NAME}
+  #     PORT: ${PORT}
+  #     NODE_ENV: ${NODE_ENV}
+  #     LOG_RULES: ${LOG_RULES}
+  #     JWT_TOKEN_SECRET: ${JWT_TOKEN_SECRET}
+  #     JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
+  #     CHAR_CODE: ${CHAR_CODE}
+  #   ports:
+  #     - "${PORT}:${PORT}" 
+  #   depends_on:
+  #     - db
+  #   command: sh -c "sleep 10 && yarn start:dev" 
+  #   networks:
+  #     - mynetwork
 
 networks:
   mynetwork:

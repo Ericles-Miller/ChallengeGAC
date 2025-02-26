@@ -2,13 +2,12 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { LoggerService } from './logger.service';
 import { LoggerModule } from 'nestjs-pino';
 import { CustomLogger } from './custom-logger';
-import { LoggerController } from './logger.controller';
 import { LoggerMiddleware } from './logger-middleware';
 import 'dotenv/config';
 
 @Module({
   imports: [LoggerModule.forRoot({ pinoHttp: { level: 'trace', autoLogging: false } })],
-  controllers: [LoggerController],
+  controllers: [],
   providers: [LoggerService, CustomLogger],
   exports: [CustomLogger],
 })
