@@ -23,7 +23,7 @@ export class LoggerService {
       const log = new Logger(method, url, statusCode, ip, level, timeRequest, userAgent, referer, userId);
 
       const logString = JSON.stringify(log);
-      fs.appendFileSync(path.join(__dirname, '../../filebeat/filebeat.yml'), logString + '\n');
+      fs.appendFileSync(path.join(__dirname, '../../logstash/my-app.log'), logString + '\n');
     } catch {
       throw new InternalServerErrorException('Error saving log');
     }

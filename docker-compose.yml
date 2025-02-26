@@ -15,9 +15,8 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
     networks:
       - mynetwork
-
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.16.4
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -58,15 +57,15 @@ services:
     container_name: filebeat
     user: root
     volumes:
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro  # Configuração do Filebeat
+      - ./logstash/my-app.log:/usr/src/logstash/my-app.log:ro  # Montar o arquivo de log no Filebeat
     depends_on:
       - logstash
       - elasticsearch
       - kibana
     networks:
       - elk
-
+  
   # app:
   #   build: .
   #   container_name: myApp
