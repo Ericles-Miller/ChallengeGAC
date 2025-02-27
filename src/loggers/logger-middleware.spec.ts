@@ -1,4 +1,3 @@
-import { LoggerService } from './logger.service';
 import { CustomLogger } from './custom-logger';
 import { Request, Response, NextFunction } from 'express';
 import { LoggerMiddleware } from './logger-middleware';
@@ -6,17 +5,12 @@ import { ELoggerLevel } from './logger-level.enum';
 
 describe('LoggerMiddleware', () => {
   let middleware: LoggerMiddleware;
-  let mockLoggerService: Partial<LoggerService>;
   let mockCustomLogger: Partial<CustomLogger>;
   let request: Partial<Request>;
   let response: Partial<Response>;
   let next: NextFunction;
 
   beforeEach(() => {
-    mockLoggerService = {
-      logRequest: jest.fn(),
-    };
-
     mockCustomLogger = {
       log: jest.fn(),
       warn: jest.fn(),
@@ -25,7 +19,7 @@ describe('LoggerMiddleware', () => {
       verbose: jest.fn(),
     };
 
-    middleware = new LoggerMiddleware(mockLoggerService as LoggerService, mockCustomLogger as CustomLogger);
+    middleware = new LoggerMiddleware(mockCustomLogger as CustomLogger);
 
     request = {
       method: 'GET',
