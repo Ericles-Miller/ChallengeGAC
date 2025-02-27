@@ -63,6 +63,9 @@ services:
     volumes:
       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro  
       - ./logstash/my-app.log:/usr/src/logstash/my-app.log:ro 
+      - ./logstash/transaction-reversal-audit.log:/usr/src/logstash/transaction-reversal-audit.log:ro 
+      - ./logstash/transaction-audit.log:/usr/src/logstash/transaction-audit.log:ro 
+
     depends_on:
       - logstash
       - elasticsearch

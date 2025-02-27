@@ -3,6 +3,8 @@ filebeat.inputs:
     enabled: true
     paths:
       - /usr/src/logstash/my-app.log
+      - /usr/src/logstash/transaction-audit.log
+      - /usr/src/logstash/transaction-reversal-audit.log
     json.message_key: log
     json.keys_under_root: true
     json.add_error_key: true
