@@ -2,6 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import * as apm from 'elastic-apm-node';
+
+apm.start({
+  serviceName: 'minha-api-nestjs',
+  secretToken: '',
+  serverUrl: 'http://localhost:8200',
+  environment: 'production',
+  captureBody: 'errors',
+});
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

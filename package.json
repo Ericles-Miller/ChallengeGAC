@@ -38,6 +38,7 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "dotenv": "^16.4.7",
+    "elastic-apm-node": "^4.11.0",
     "elasticsearch": "^16.7.3",
     "nestjs-pino": "^4.3.0",
     "passport": "^0.7.0",

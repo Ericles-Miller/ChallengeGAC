@@ -72,6 +72,20 @@ services:
       - kibana
     networks:
       - elk
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.4.2
+    container_name: apm-server
+    depends_on:
+      - elasticsearch
+    environment:
+      - output.elasticsearch.hosts=["http://elasticsearch:9200"]
+    ports:
+      - "8200:8200"
+    command: >
+      apm-server -e
+      -E apm-server.host=0.0.0.0:8200
+      -E setup.kibana.host=kibana:5601
   
   app:
     build: .
