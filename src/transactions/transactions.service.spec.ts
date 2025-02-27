@@ -9,6 +9,7 @@ import { TransactionReversal } from './entities/transaction-reversal.entity';
 import { CreateTransactionReversalDto } from './dto/create-transaction-reversal.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+import { LoggerService } from 'src/loggers/logger.service';
 
 dotenv.config({ path: '.env' });
 describe('TransactionsService', () => {
@@ -34,6 +35,13 @@ describe('TransactionsService', () => {
                 save: jest.fn(),
               },
             }),
+          },
+        },
+        {
+          provide: LoggerService,
+          useValue: {
+            sendTransactionAuditLog: jest.fn(),
+            sendTransactionReversalAuditLog: jest.fn(),
           },
         },
         {

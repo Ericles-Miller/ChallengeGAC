@@ -56,7 +56,7 @@ export class TransactionsService {
 
       await queryRunner.commitTransaction();
 
-      this.loggerService.sendTransactionAuditLog(transaction);
+      await this.loggerService.sendTransactionAuditLog(transaction);
 
       return transaction;
     } catch (error) {
@@ -184,7 +184,7 @@ export class TransactionsService {
 
       await queryRunner.commitTransaction();
 
-      this.loggerService.sendTransactionReversalAuditLog(transactionReversal);
+      await this.loggerService.sendTransactionReversalAuditLog(transactionReversal);
 
       return transactionReversal;
     } catch (error) {

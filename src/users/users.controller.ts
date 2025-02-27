@@ -29,6 +29,7 @@ import { User } from './entities/user.entity';
 import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
 import { JwtAuthGuard } from 'src/auth/Jwt-auth-guard';
 import { Request } from 'express';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('users')
 @ApiTags('users')
@@ -51,6 +52,7 @@ export class UsersController {
     }
     `,
   })
+  @Throttle({ default: { limit: 1000, ttl: 60000 } })
   @ApiResponse({
     status: 201,
     type: User,
@@ -68,12 +70,17 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
+  })
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.usersService.create(createUserDto);
   }
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
+  @Throttle({ default: { limit: 200, ttl: 60000 } })
   @ApiQuery({
     name: 'page',
     required: false,
@@ -133,6 +140,10 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
+  })
   @ApiExtraModels(PaginatedListDto, User)
   async findAll(
     @Query('page') page?: string,
@@ -147,6 +158,7 @@ export class UsersController {
 
   @Get('/find-your-user')
   @ApiBearerAuth('sessionAuth')
+  @Throttle({ default: { limit: 20, ttl: 10000 } })
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
@@ -173,6 +185,10 @@ export class UsersController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
+  })
   async findOne(@Req() request: Request): Promise<User> {
     const { userId } = request.user;
     return await this.usersService.findOne(userId);
@@ -181,6 +197,7 @@ export class UsersController {
   @Patch('')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 6, ttl: 6000 } })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiBody({
     type: UpdateUserDto,
@@ -220,6 +237,10 @@ export class UsersController {
     status: 400,
     description: 'Bad request',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
+  })
   @HttpCode(204)
   async update(@Req() request: Request, @Body() updateUserDto: UpdateUserDto): Promise<void> {
     const { userId } = request.user;
@@ -229,6 +250,7 @@ export class UsersController {
   @Delete('')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 6, ttl: 6000 } })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
     summary: 'Delete user',
@@ -252,6 +274,10 @@ export class UsersController {
   @ApiResponse({
     status: 401,
     description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
   })
   @HttpCode(204)
   async remove(@Req() request: Request): Promise<void> {
