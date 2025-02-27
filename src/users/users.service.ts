@@ -24,8 +24,6 @@ export class UsersService {
 
       return await this.usersRepository.save(user);
     } catch (error) {
-      console.log(error);
-
       if (error instanceof BadRequestException) throw error;
 
       throw new InternalServerErrorException('Unexpected server error to create a new user');
@@ -34,11 +32,18 @@ export class UsersService {
 
   async findAll(page: number, limit: number, name?: string): Promise<PaginatedListDto<User[]>> {
     try {
-      const [users, total] = await this.usersRepository.findAndCount({
-        where: { name: name ? name : undefined },
-        take: limit,
-        skip: (page - 1) * limit,
-      });
+      const queryBuilder = this.usersRepository.createQueryBuilder('user');
+
+      if (name) {
+        queryBuilder.where('unaccent(user.name) ILIKE unaccent(:name)', {
+          name: `%${name}%`,
+        });
+      }
+
+      const [users, total] = await queryBuilder
+        .take(limit)
+        .skip((page - 1) * limit)
+        .getManyAndCount();
 
       return {
         data: users,
@@ -47,7 +52,7 @@ export class UsersService {
         limit: Math.ceil(total / limit),
       };
     } catch {
-      throw new InternalServerErrorException('Internal server error finding transactions');
+      throw new InternalServerErrorException('Internal server error finding users');
     }
   }
 

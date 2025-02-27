@@ -109,9 +109,7 @@ export class TransactionsService {
         page,
         limit,
       };
-    } catch (error) {
-      console.log(error);
-
+    } catch {
       throw new InternalServerErrorException('Error to find all transactions');
     }
   }
