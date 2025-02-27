@@ -42,6 +42,8 @@ $ yarn install
 
 obs: há um arquivo init.sql na raiz do projeto com o nome do banco de dados já configurado. Caso querira definir outro nome para o banco de dados, altere o nome do banco de dados no arquivo init.sql também.
 
+além disso, crie um arquivo chamado my-app.log no dir logstash/
+
 
 ## Run tests
 
