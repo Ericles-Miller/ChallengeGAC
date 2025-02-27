@@ -25,8 +25,8 @@ describe('UsersService', () => {
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
-            findAndCount: jest.fn(),
             delete: jest.fn(),
+            createQueryBuilder: jest.fn(),
           },
         },
       ],
@@ -86,22 +86,74 @@ describe('UsersService', () => {
 
   describe('Suit test to find all users', () => {
     it('should find all users', async () => {
-      jest.spyOn(repository, 'findAndCount').mockResolvedValueOnce([[user], 1]);
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValueOnce([[user], 1]),
+      };
+
+      jest.spyOn(repository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
 
       const result = await service.findAll(1, 10);
+
       expect(result).toEqual({
         data: [user],
         total: 1,
         page: 1,
         limit: 1,
       });
-      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
+
+      expect(repository.createQueryBuilder).toHaveBeenCalledWith('user');
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
+      expect(mockQueryBuilder.skip).toHaveBeenCalledWith(0);
+      expect(mockQueryBuilder.getManyAndCount).toHaveBeenCalled();
+    });
+
+    it('should find all users with name filter', async () => {
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValueOnce([[user], 1]),
+      };
+
+      jest.spyOn(repository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
+
+      const result = await service.findAll(1, 10, 'John');
+
+      expect(result).toEqual({
+        data: [user],
+        total: 1,
+        page: 1,
+        limit: 1,
+      });
+
+      expect(repository.createQueryBuilder).toHaveBeenCalledWith('user');
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('unaccent(user.name) ILIKE unaccent(:name)', {
+        name: '%John%',
+      });
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
+      expect(mockQueryBuilder.skip).toHaveBeenCalledWith(0);
+      expect(mockQueryBuilder.getManyAndCount).toHaveBeenCalled();
     });
 
     it('should throw a InternalServerErrorException if unexpected error occurs', async () => {
-      jest.spyOn(repository, 'findAndCount').mockRejectedValueOnce(new Error());
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockRejectedValueOnce(new Error()),
+      };
+
+      jest.spyOn(repository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
 
       await expect(service.findAll(1, 10)).rejects.toThrow(InternalServerErrorException);
+
+      expect(repository.createQueryBuilder).toHaveBeenCalledWith('user');
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
+      expect(mockQueryBuilder.skip).toHaveBeenCalledWith(0);
+      expect(mockQueryBuilder.getManyAndCount).toHaveBeenCalled();
     });
   });
 
