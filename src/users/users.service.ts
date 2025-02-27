@@ -24,8 +24,6 @@ export class UsersService {
 
       return await this.usersRepository.save(user);
     } catch (error) {
-      console.log(error);
-
       if (error instanceof BadRequestException) throw error;
 
       throw new InternalServerErrorException('Unexpected server error to create a new user');
