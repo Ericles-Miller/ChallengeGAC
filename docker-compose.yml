@@ -18,6 +18,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
     container_name: elasticsearch
+    restart: always
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false  
@@ -29,6 +30,7 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:8.6.2
     container_name: logstash
+    restart: always
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
     environment:
@@ -43,6 +45,7 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:8.6.2
     container_name: kibana
+    restart: always
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     depends_on:
@@ -55,10 +58,11 @@ services:
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.6.2
     container_name: filebeat
+    restart: always
     user: root
     volumes:
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro  # Configuração do Filebeat
-      - ./logstash/my-app.log:/usr/src/logstash/my-app.log:ro  # Montar o arquivo de log no Filebeat
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro  
+      - ./logstash/my-app.log:/usr/src/logstash/my-app.log:ro 
     depends_on:
       - logstash
       - elasticsearch
@@ -66,29 +70,29 @@ services:
     networks:
       - elk
   
-  # app:
-  #   build: .
-  #   container_name: myApp
-  #   restart: always
-  #   environment:
-  #     DATABASE_HOST: ${DATABASE_HOST} 
-  #     DATABASE_PORT: ${DATABASE_PORT} 
-  #     DATABASE_USERNAME: ${DATABASE_USERNAME}
-  #     DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-  #     DATABASE_NAME: ${DATABASE_NAME}
-  #     PORT: ${PORT}
-  #     NODE_ENV: ${NODE_ENV}
-  #     LOG_RULES: ${LOG_RULES}
-  #     JWT_TOKEN_SECRET: ${JWT_TOKEN_SECRET}
-  #     JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
-  #     CHAR_CODE: ${CHAR_CODE}
-  #   ports:
-  #     - "${PORT}:${PORT}" 
-  #   depends_on:
-  #     - db
-  #   command: sh -c "sleep 10 && yarn start:dev" 
-  #   networks:
-  #     - mynetwork
+  app:
+    build: .
+    container_name: myApp
+    restart: always
+    environment:
+      DATABASE_HOST: ${DATABASE_HOST} 
+      DATABASE_PORT: ${DATABASE_PORT} 
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      LOG_RULES: ${LOG_RULES}
+      JWT_TOKEN_SECRET: ${JWT_TOKEN_SECRET}
+      JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
+      CHAR_CODE: ${CHAR_CODE}
+    ports:
+      - "${PORT}:${PORT}" 
+    depends_on:
+      - db
+    command: sh -c "sleep 10 && yarn start:dev" 
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:
