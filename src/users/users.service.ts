@@ -53,8 +53,7 @@ export class UsersService {
         page,
         limit: Math.ceil(total / limit),
       };
-    } catch (error) {
-      console.error(error);
+    } catch {
       throw new InternalServerErrorException('Internal server error finding users');
     }
   }

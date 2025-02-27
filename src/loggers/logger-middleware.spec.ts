@@ -1,7 +1,12 @@
 import { CustomLogger } from './custom-logger';
 import { Request, Response, NextFunction } from 'express';
 import { LoggerMiddleware } from './logger-middleware';
-import { ELoggerLevel } from './logger-level.enum';
+import * as fs from 'fs';
+
+// Mock fs module
+jest.mock('fs', () => ({
+  appendFileSync: jest.fn(),
+}));
 
 describe('LoggerMiddleware', () => {
   let middleware: LoggerMiddleware;
@@ -11,6 +16,9 @@ describe('LoggerMiddleware', () => {
   let next: NextFunction;
 
   beforeEach(() => {
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+
     mockCustomLogger = {
       log: jest.fn(),
       warn: jest.fn(),
@@ -26,11 +34,15 @@ describe('LoggerMiddleware', () => {
       originalUrl: '/test',
       ip: '127.0.0.1',
       params: { movieId: '123' },
+      headers: {},
+      query: {},
+      body: {},
     };
 
     response = {
       statusCode: 200,
-      on: jest.fn(function (this: Response, event: string, callback: () => void) {
+      get: jest.fn().mockReturnValue('100'),
+      on: jest.fn().mockImplementation(function (this: Response, event: string, callback: () => void) {
         if (event === 'finish') callback();
         return this;
       }),
@@ -39,37 +51,50 @@ describe('LoggerMiddleware', () => {
     next = jest.fn();
   });
 
-  it('should call logRequest and log when response is successful', () => {
-    middleware.use(request as Request, response as Response, next);
+  it('should log request information and call next', async () => {
+    await middleware.use(request as Request, response as Response, next);
 
-    expect(mockLoggerService.logRequest).toHaveBeenCalledWith(
-      'GET',
-      '/test',
-      200,
-      '127.0.0.1',
-      ELoggerLevel.INFO,
-      expect.any(Number),
-    );
-
-    expect(mockCustomLogger.log).toHaveBeenCalledWith(expect.stringContaining('GET /test 200'), 'HTTP');
-  });
-
-  it('should call error log when statusCode is 500', () => {
-    response.statusCode = 500;
-    middleware.use(request as Request, response as Response, next);
-
-    expect(mockCustomLogger.error).toHaveBeenCalledWith(expect.stringContaining('GET /test 500'), 'HTTP');
-  });
-
-  it('should call warn log when statusCode is 400', () => {
-    response.statusCode = 400;
-    middleware.use(request as Request, response as Response, next);
-
-    expect(mockCustomLogger.warn).toHaveBeenCalledWith(expect.stringContaining('GET /test 400'), 'HTTP');
-  });
-
-  it('should call next()', () => {
-    middleware.use(request as Request, response as Response, next);
+    expect(fs.appendFileSync).toHaveBeenCalled();
+    expect(mockCustomLogger.log).toHaveBeenCalledWith(expect.stringContaining('Method: GET'), 'HTTP');
     expect(next).toHaveBeenCalled();
+  });
+
+  it('should call error log when statusCode is 500', async () => {
+    response.statusCode = 500;
+    await middleware.use(request as Request, response as Response, next);
+
+    expect(fs.appendFileSync).toHaveBeenCalled();
+    expect(mockCustomLogger.error).toHaveBeenCalledWith(expect.stringContaining('Status: 500'), 'HTTP');
+  });
+
+  it('should call warn log when statusCode is 400', async () => {
+    response.statusCode = 400;
+    await middleware.use(request as Request, response as Response, next);
+
+    expect(fs.appendFileSync).toHaveBeenCalled();
+    expect(mockCustomLogger.warn).toHaveBeenCalledWith(expect.stringContaining('Status: 400'), 'HTTP');
+  });
+
+  it('should sanitize sensitive data in headers', async () => {
+    request.headers = {
+      authorization: 'Bearer token123',
+      cookie: 'session=123',
+    };
+
+    await middleware.use(request as Request, response as Response, next);
+
+    const appendFileSyncCall = (fs.appendFileSync as jest.Mock).mock.calls[0][1];
+    expect(appendFileSyncCall).toContain('[REDACTED]');
+  });
+
+  it('should include correlation ID if present', async () => {
+    request.headers = {
+      'x-correlation-id': 'test-correlation-id',
+    };
+
+    await middleware.use(request as Request, response as Response, next);
+
+    const appendFileSyncCall = (fs.appendFileSync as jest.Mock).mock.calls[0][1];
+    expect(appendFileSyncCall).toContain('test-correlation-id');
   });
 });
