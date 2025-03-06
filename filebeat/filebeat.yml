@@ -3,11 +3,22 @@ filebeat.inputs:
     enabled: true
     paths:
       - /usr/src/logstash/my-app.log
+    fields:
+      log_type: nestjs
+
+  - type: log
+    enabled: true
+    paths:
       - /usr/src/logstash/transaction-audit.log
+    fields:
+      log_type: transaction
+
+  - type: log
+    enabled: true
+    paths:
       - /usr/src/logstash/transaction-reversal-audit.log
-    json.message_key: log
-    json.keys_under_root: true
-    json.add_error_key: true
+    fields:
+      log_type: transaction-reversal
 
 output.logstash:
   hosts: ["logstash:5044"]

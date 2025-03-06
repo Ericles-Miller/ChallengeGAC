@@ -16,25 +16,35 @@ services:
     networks:
       - mynetwork
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.16.5
     container_name: elasticsearch
     restart: always
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false  
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - xpack.security.enrollment.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - "9200:9200"
-    networks:
+    networks: 
       - elk
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:8.6.2
+    image: docker.elastic.co/logstash/logstash:8.16.5
     container_name: logstash
     restart: always
     volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     environment:
       - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+      - xpack.monitoring.enabled=false
     depends_on:
       - elasticsearch
     ports:
@@ -43,11 +53,12 @@ services:
       - elk
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.6.2
+    image: docker.elastic.co/kibana/kibana:8.16.5
     container_name: kibana
     restart: always
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - XPACK_SECURITY_ENABLED=false
     depends_on:
       - elasticsearch
     ports:
@@ -56,60 +67,21 @@ services:
       - elk
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:8.6.2
+    image: docker.elastic.co/beats/filebeat:8.16.5
     container_name: filebeat
     restart: always
     user: root
     volumes:
       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro  
-      - ./logstash/my-app.log:/usr/src/logstash/my-app.log:ro 
-      - ./logstash/transaction-reversal-audit.log:/usr/src/logstash/transaction-reversal-audit.log:ro 
-      - ./logstash/transaction-audit.log:/usr/src/logstash/transaction-audit.log:ro 
-
+      - ./logstash/my-app.log:/usr/src/logstash/my-app.log:ro
+      - ./logstash/transaction-audit.log:/usr/src/logstash/transaction-audit.log:ro
+      - ./logstash/transaction-reversal-audit.log:/usr/src/logstash/transaction-reversal-audit.log:ro
     depends_on:
       - logstash
       - elasticsearch
       - kibana
     networks:
       - elk
-
-  apm-server:
-    image: docker.elastic.co/apm/apm-server:8.4.2
-    container_name: apm-server
-    depends_on:
-      - elasticsearch
-    environment:
-      - output.elasticsearch.hosts=["http://elasticsearch:9200"]
-    ports:
-      - "8200:8200"
-    command: >
-      apm-server -e
-      -E apm-server.host=0.0.0.0:8200
-      -E setup.kibana.host=kibana:5601
-  
-  app:
-    build: .
-    container_name: myApp
-    restart: always
-    environment:
-      DATABASE_HOST: ${DATABASE_HOST} 
-      DATABASE_PORT: ${DATABASE_PORT} 
-      DATABASE_USERNAME: ${DATABASE_USERNAME}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_NAME: ${DATABASE_NAME}
-      PORT: ${PORT}
-      NODE_ENV: ${NODE_ENV}
-      LOG_RULES: ${LOG_RULES}
-      JWT_TOKEN_SECRET: ${JWT_TOKEN_SECRET}
-      JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
-      CHAR_CODE: ${CHAR_CODE}
-    ports:
-      - "${PORT}:${PORT}" 
-    depends_on:
-      - db
-    command: sh -c "sleep 10 && yarn start:dev" 
-    networks:
-      - mynetwork
 
 networks:
   mynetwork:
