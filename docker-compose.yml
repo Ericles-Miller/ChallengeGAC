@@ -35,6 +35,11 @@ services:
       - "9200:9200"
     networks: 
       - elk
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -vq '\"status\":\"red\"'"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.16.5
@@ -80,6 +85,34 @@ services:
       - logstash
       - elasticsearch
       - kibana
+    networks:
+      - elk
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.16.5
+    container_name: apm-server
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_started
+    environment:
+      - output.elasticsearch.hosts=["http://elasticsearch:9200"]
+      - setup.kibana.host=http://kibana:5601
+      - setup.template.enabled=true
+      - setup.template.overwrite=true
+      - setup.dashboards.enabled=true
+      - apm-server.kibana.enabled=true
+      - apm-server.rum.enabled=true
+      - monitoring.enabled=true
+      - monitoring.elasticsearch.hosts=["http://elasticsearch:9200"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8200/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "8200:8200"
     networks:
       - elk
 
