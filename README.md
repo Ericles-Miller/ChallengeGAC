@@ -158,13 +158,15 @@ $ yarn
 
 ## Intruções
 
-1- para configurar o projeto cria um arquivo .env na raiz do projeto e coloque as seguintes variáveis de ambiente presentes no arquivo .env.example:
+1- Acesse a branch developer ou main
+
+2- para configurar o projeto cria um arquivo .env na raiz do projeto e coloque as seguintes variáveis de ambiente presentes no arquivo .env.example:
 
 obs: há um arquivo init.sql na raiz do projeto com o nome do banco de dados já configurado. Caso querira definir outro nome para o banco de dados, altere o nome do banco de dados no arquivo init.sql também.
 
-2- Para a configuração do monitoramento do sistema crie os seguintes 3 arquivos na pasta logstash presente na raíz do projeto. my-app.log, transaction-audit.log, transaction-reversal-audit.log
+3- Para a configuração do monitoramento do sistema crie os seguintes 3 arquivos na pasta logstash presente na raíz do projeto. my-app.log, transaction-audit.log, transaction-reversal-audit.log
 
-3- Caso você esteja usando a via docker as variáveis de ambiente deverão estar setadas de acordo com as instruções do arquivo .env.example
+4- Caso você esteja usando a via docker as variáveis de ambiente deverão estar setadas de acordo com as instruções do arquivo .env.example
 
 ## Run tests
 
