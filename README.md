@@ -23,7 +23,16 @@
 - [Troubleshooting](#troubleshooting)
 
 ## Visão Geral
-[Descrição atual do objetivo + requisitos]
+ecnologias desejadas 
+• NodeJs 
+• NestJs 
+• TypeScript. 
+  
+Objetivo 
+O objetivo consiste na criação de uma carteira financeira em que os usuários possam realizar 
+transferência de saldo. 
+Teremos apenas um tipo de usuário que pode enviar ou receber dinheiro de qualquer outro. 
+ 
 
 ## Tecnologias
 - NestJS
@@ -34,7 +43,7 @@
 - JWT para autenticação
 
 ## Arquitetura
-[Adicionar diagrama da arquitetura]
+Arquitetura padrão do NEST.js (MVC)
 
 ## Pré-requisitos
 - Node.js (v16+)
@@ -46,7 +55,7 @@
 ### Configuração do Ambiente
 1. Clone o repositório
 2. Copie o `.env.example` para `.env`
-3. Configure as variáveis de ambiente conforme necessário
+3. Configure as variáveis de ambiente
 
 ### Usando Docker
 ```bash
@@ -55,20 +64,6 @@ docker-compose up -d
 
 # Verificar logs
 docker-compose logs -f
-```
-
-### Configuração
-#### Variáveis de Ambiente
-```env
-# Banco de Dados
-DATABASE_HOST - Host do banco de dados
-DATABASE_USERNAME - Usuário do banco
-...
-
-# ELK Stack
-ELASTICSEARCH_URL - URL do Elasticsearch
-KIBANA_URL - URL do Kibana
-...
 ```
 
 ## Monitoramento
@@ -81,6 +76,8 @@ Os logs são divididos em três categorias:
 - my-app.log: Logs gerais da aplicação
 - transaction-audit.log: Logs de transações
 - transaction-reversal-audit.log: Logs de reversões
+1. Acesse `http://localhost:5601`
+2. Navegue até "Stack Management" > Index Management > Name_Index > Discover Index
 
 ## Troubleshooting
 ### Problemas Comuns
