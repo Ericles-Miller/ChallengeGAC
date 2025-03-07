@@ -32,7 +32,9 @@ export class UsersService {
 
   async findAll(page: number, limit: number, name?: string): Promise<PaginatedListDto<User[]>> {
     try {
-      const queryBuilder = this.usersRepository.createQueryBuilder('user');
+      const queryBuilder = this.usersRepository
+        .createQueryBuilder('user')
+        .select(['user.id', 'user.name', 'user.email', 'user.isActive', 'user.createdAt', 'user.updatedAt']);
 
       if (name) {
         queryBuilder.where('unaccent(user.name) ILIKE unaccent(:name)', {

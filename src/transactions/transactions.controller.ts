@@ -27,6 +27,7 @@ import { Request } from 'express';
 import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
 import { TransactionReversal } from './entities/transaction-reversal.entity';
 import { CreateTransactionReversalDto } from './dto/create-transaction-reversal.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('transactions')
 @ApiTags('transactions')
@@ -47,6 +48,7 @@ export class TransactionsController {
   })
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 20, ttl: 10000 } })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({
     status: 404,
@@ -69,6 +71,10 @@ export class TransactionsController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
+  })
   async create(
     @Body() createTransactionDto: CreateTransactionDto,
     @Req() request: Request,
@@ -80,6 +86,7 @@ export class TransactionsController {
   @Get()
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 100, ttl: 60000 } })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiQuery({
     name: 'page',
@@ -129,6 +136,10 @@ export class TransactionsController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
+  })
   @ApiExtraModels(PaginatedListDto, Transaction)
   async findAll(
     @Req() request: Request,
@@ -147,6 +158,7 @@ export class TransactionsController {
   @Get(':id')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 100, ttl: 60000 } })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
     summary: 'Find transaction by id',
@@ -172,6 +184,10 @@ export class TransactionsController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
+  })
   async findOne(@Param('id') id: string, @Req() request: Request): Promise<Transaction> {
     const { userId } = request.user;
     return await this.transactionsService.findOne(id, userId);
@@ -180,6 +196,7 @@ export class TransactionsController {
   @Post('reversal')
   @ApiBearerAuth('sessionAuth')
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 20, ttl: 10000 } })
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({
     summary: 'Reverse a transaction that was received by the user',
@@ -212,6 +229,10 @@ export class TransactionsController {
   @ApiResponse({
     status: 400,
     description: 'Bad Request',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many requests',
   })
   async reversal(
     @Body() createTransactionReversalDto: CreateTransactionReversalDto,

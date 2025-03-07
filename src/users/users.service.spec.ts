@@ -88,6 +88,7 @@ describe('UsersService', () => {
     it('should find all users', async () => {
       const mockQueryBuilder = {
         where: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         getManyAndCount: jest.fn().mockResolvedValueOnce([[user], 1]),
@@ -113,6 +114,7 @@ describe('UsersService', () => {
     it('should find all users with name filter', async () => {
       const mockQueryBuilder = {
         where: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         getManyAndCount: jest.fn().mockResolvedValueOnce([[user], 1]),
@@ -143,6 +145,7 @@ describe('UsersService', () => {
         where: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
         getManyAndCount: jest.fn().mockRejectedValueOnce(new Error()),
       };
 

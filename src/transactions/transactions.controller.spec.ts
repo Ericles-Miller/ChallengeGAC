@@ -15,6 +15,7 @@ import { UsersService } from 'src/users/users.service';
 import { UsersController } from 'src/users/users.controller';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { CreateTransactionReversalDto } from './dto/create-transaction-reversal.dto';
+import { LoggersModule } from 'src/loggers/logger.module';
 
 describe('TransactionsController', () => {
   let controller: TransactionsController;
@@ -54,9 +55,8 @@ describe('TransactionsController', () => {
           entities: [User, RevokedToken, Transaction, TransactionReversal],
           synchronize: true,
         }),
-
+        LoggersModule,
         TypeOrmModule.forFeature([Transaction, RevokedToken, User]),
-
         JwtModule.register({
           secret: 'dc57f9ec-c6b2-477f-a6af-fc57c1b86be0',
           signOptions: { expiresIn: '1h' },

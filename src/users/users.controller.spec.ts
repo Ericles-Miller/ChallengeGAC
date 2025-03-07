@@ -101,8 +101,10 @@ describe('UsersController (Integration)', () => {
     const users = await controller.findAll('1', '10');
     expect(users).toBeDefined();
     expect(users.data).toHaveLength(2);
-    expect(users.data[0]).toEqual(userOne);
-    expect(users.data[1]).toEqual(userTwo);
+    expect(users.data[0].name).toEqual(userOne.name);
+    expect(users.data[0].email).toEqual(userOne.email);
+    expect(users.data[1].name).toEqual(userTwo.name);
+    expect(users.data[1].email).toEqual(userTwo.email);
   });
 
   it('should return a single user', async () => {

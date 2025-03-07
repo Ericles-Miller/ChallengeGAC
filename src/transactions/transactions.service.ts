@@ -13,12 +13,13 @@ import { PaginatedListDto } from 'src/shared/Dtos/PaginatedList.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionReversal } from './entities/transaction-reversal.entity';
 import { CreateTransactionReversalDto } from './dto/create-transaction-reversal.dto';
+import { LoggerService } from 'src/loggers/logger.service';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     private readonly dataSource: DataSource,
-
+    private readonly loggerService: LoggerService,
     @InjectRepository(Transaction)
     private readonly repository: Repository<Transaction>,
   ) {}
@@ -54,6 +55,9 @@ export class TransactionsService {
       await queryRunner.manager.save(Transaction, transaction);
 
       await queryRunner.commitTransaction();
+
+      await this.loggerService.sendTransactionAuditLog(transaction);
+
       return transaction;
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -179,6 +183,8 @@ export class TransactionsService {
       await queryRunner.manager.save(Transaction, transaction);
 
       await queryRunner.commitTransaction();
+
+      await this.loggerService.sendTransactionReversalAuditLog(transactionReversal);
 
       return transactionReversal;
     } catch (error) {
