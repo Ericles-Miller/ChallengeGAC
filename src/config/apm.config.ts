@@ -1,10 +1,11 @@
 import * as apm from 'elastic-apm-node';
+import 'dotenv/config';
 
 export const initAPM = () => {
   apm.start({
     serviceName: 'challenge-gac',
-    serverUrl: 'http://localhost:8200',
-    environment: process.env.NODE_ENV || 'development',
+    serverUrl: process.env.ELASTIC_APM_SERVER_URL,
+    environment: process.env.NODE_ENV,
     logLevel: 'debug',
     captureBody: 'all',
     captureHeaders: true,

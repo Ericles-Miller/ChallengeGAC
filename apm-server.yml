@@ -17,4 +17,4 @@ apm-server.kibana:
   host: "kibana:5601"
 
 apm-server.auth:
-  secret_token: "" # Opcional: adicione um token se precisar de autenticação 
+  secret_token: "" 

@@ -10,7 +10,6 @@ export class ApmInterceptor implements NestInterceptor {
     const transaction = apm.currentTransaction;
 
     if (transaction) {
-      // Adiciona informações do usuário se disponível
       if (request.user) {
         apm.setUserContext({
           id: request.user.id,
@@ -18,7 +17,6 @@ export class ApmInterceptor implements NestInterceptor {
         });
       }
 
-      // Adiciona informações customizadas
       transaction.addLabels({
         route: request.route?.path,
         method: request.method,
@@ -32,7 +30,6 @@ export class ApmInterceptor implements NestInterceptor {
       tap({
         next: () => {
           if (transaction) {
-            // Adiciona métricas de resposta
             transaction.addLabels({
               responseTime: Date.now() - startTime,
               statusCode: context.switchToHttp().getResponse().statusCode,
@@ -41,7 +38,6 @@ export class ApmInterceptor implements NestInterceptor {
         },
         error: (error) => {
           if (transaction) {
-            // Captura informações detalhadas do erro
             apm.captureError(error, {
               custom: {
                 route: request.route?.path,

@@ -15,6 +15,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
     networks:
       - mynetwork
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.16.5
     container_name: elasticsearch
@@ -62,8 +63,9 @@ services:
     container_name: kibana
     restart: always
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_URL}
       - XPACK_SECURITY_ENABLED=false
+      - XPACK_FLEET_AGENTS_ENABLED=false
     depends_on:
       - elasticsearch
     ports:
@@ -91,21 +93,17 @@ services:
   apm-server:
     image: docker.elastic.co/apm/apm-server:8.16.5
     container_name: apm-server
+    restart: always
     depends_on:
       elasticsearch:
         condition: service_healthy
       kibana:
         condition: service_started
     environment:
-      - output.elasticsearch.hosts=["http://elasticsearch:9200"]
-      - setup.kibana.host=http://kibana:5601
-      - setup.template.enabled=true
-      - setup.template.overwrite=true
-      - setup.dashboards.enabled=true
-      - apm-server.kibana.enabled=true
-      - apm-server.rum.enabled=true
-      - monitoring.enabled=true
-      - monitoring.elasticsearch.hosts=["http://elasticsearch:9200"]
+      - output.elasticsearch.hosts=["${ELASTICSEARCH_URL}"]
+      - setup.kibana.host=${KIBANA_URL}
+      - apm-server.host=":8200"
+      - apm-server.secret_token=""
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8200/"]
       interval: 10s
@@ -114,6 +112,42 @@ services:
     ports:
       - "8200:8200"
     networks:
+      - elk
+      - mynetwork
+
+  app:
+    build: .
+    container_name: myApp
+    restart: always
+    environment:
+      DATABASE_HOST: ${DATABASE_HOST} 
+      DATABASE_PORT: ${DATABASE_PORT} 
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      LOG_RULES: ${LOG_RULES}
+      JWT_TOKEN_SECRET: ${JWT_TOKEN_SECRET}
+      JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
+      CHAR_CODE: ${CHAR_CODE}
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+      ELASTIC_APM_SERVER_URL: "http://apm-server:8200"
+      ELASTIC_APM_SERVICE_NAME: "my-nodejs-app"
+      KIBANA_URL: ${KIBANA_URL}
+      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT}
+      LOGSTASH_PORT: ${LOGSTASH_PORT}
+      KIBANA_PORT: ${KIBANA_PORT}
+      APM_SERVER_PORT: ${APM_SERVER_PORT}
+    ports:
+      - "${PORT}:${PORT}" 
+    depends_on:
+      - db
+      - elasticsearch
+      - apm-server
+    command: sh -c "sleep 10 && yarn start:dev" 
+    networks:
+      - mynetwork
       - elk
 
 networks:
