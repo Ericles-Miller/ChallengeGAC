@@ -4,12 +4,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { TransactionReversal } from 'src/transactions/entities/transaction-reversal.entity';
 
-const LOG_DIR = process.env.NODE_ENV === 'production' ? '/usr/src/app/logstash' : path.join(__dirname, '../../logstash');
+const LOG_DIR =
+  process.env.NODE_ENV === 'production' ? '/usr/src/app/logstash' : path.join(__dirname, '../../logstash');
 
 @Injectable()
 export class LoggerService {
   constructor() {
-    // Ensure log directory exists
     if (!fs.existsSync(LOG_DIR)) {
       fs.mkdirSync(LOG_DIR, { recursive: true });
     }
