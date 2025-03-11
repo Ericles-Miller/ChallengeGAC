@@ -139,13 +139,15 @@ services:
       LOGSTASH_PORT: ${LOGSTASH_PORT}
       KIBANA_PORT: ${KIBANA_PORT}
       APM_SERVER_PORT: ${APM_SERVER_PORT}
+    volumes:
+      - ./logstash:/usr/src/app/logstash
     ports:
       - "${PORT}:${PORT}" 
     depends_on:
       - db
       - elasticsearch
       - apm-server
-    command: sh -c "sleep 10 && yarn start:dev" 
+    command: sh -c "mkdir -p /usr/src/app/logstash && touch /usr/src/app/logstash/my-app.log /usr/src/app/logstash/transaction-audit.log /usr/src/app/logstash/transaction-reversal-audit.log && yarn start:dev" 
     networks:
       - mynetwork
       - elk

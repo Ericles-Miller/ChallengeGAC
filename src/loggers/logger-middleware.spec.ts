@@ -3,9 +3,10 @@ import { Request, Response, NextFunction } from 'express';
 import { LoggerMiddleware } from './logger-middleware';
 import * as fs from 'fs';
 
-// Mock fs module
 jest.mock('fs', () => ({
   appendFileSync: jest.fn(),
+  existsSync: jest.fn(),
+  mkdirSync: jest.fn(),
 }));
 
 describe('LoggerMiddleware', () => {
@@ -16,8 +17,12 @@ describe('LoggerMiddleware', () => {
   let next: NextFunction;
 
   beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
+    process.env.NODE_ENV = 'test';
+
+    // Mock fs functions
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
+    (fs.mkdirSync as jest.Mock).mockImplementation(() => undefined);
 
     mockCustomLogger = {
       log: jest.fn(),
@@ -51,10 +56,35 @@ describe('LoggerMiddleware', () => {
     next = jest.fn();
   });
 
+  afterEach(() => {
+    jest.resetModules();
+    delete process.env.NODE_ENV;
+  });
+
+  it('should create log directory if it does not exist', () => {
+    expect(fs.existsSync).toHaveBeenCalled();
+    expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), { recursive: true });
+  });
+
+  it('should not create log directory if it already exists', () => {
+    // Reset mocks and set existsSync to return true
+    jest.clearAllMocks();
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+
+    // Create new middleware instance after setting up mocks
+    new LoggerMiddleware(mockCustomLogger as CustomLogger);
+
+    expect(fs.existsSync).toHaveBeenCalled();
+    expect(fs.mkdirSync).not.toHaveBeenCalled();
+  });
+
   it('should log request information and call next', async () => {
     await middleware.use(request as Request, response as Response, next);
 
-    expect(fs.appendFileSync).toHaveBeenCalled();
+    expect(fs.appendFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('my-app.log'),
+      expect.stringContaining('"method":"GET"'),
+    );
     expect(mockCustomLogger.log).toHaveBeenCalledWith(expect.stringContaining('Method: GET'), 'HTTP');
     expect(next).toHaveBeenCalled();
   });
@@ -63,7 +93,10 @@ describe('LoggerMiddleware', () => {
     response.statusCode = 500;
     await middleware.use(request as Request, response as Response, next);
 
-    expect(fs.appendFileSync).toHaveBeenCalled();
+    expect(fs.appendFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('my-app.log'),
+      expect.stringContaining('"status":500'),
+    );
     expect(mockCustomLogger.error).toHaveBeenCalledWith(expect.stringContaining('Status: 500'), 'HTTP');
   });
 
@@ -71,7 +104,10 @@ describe('LoggerMiddleware', () => {
     response.statusCode = 400;
     await middleware.use(request as Request, response as Response, next);
 
-    expect(fs.appendFileSync).toHaveBeenCalled();
+    expect(fs.appendFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('my-app.log'),
+      expect.stringContaining('"status":400'),
+    );
     expect(mockCustomLogger.warn).toHaveBeenCalledWith(expect.stringContaining('Status: 400'), 'HTTP');
   });
 
@@ -83,8 +119,10 @@ describe('LoggerMiddleware', () => {
 
     await middleware.use(request as Request, response as Response, next);
 
-    const appendFileSyncCall = (fs.appendFileSync as jest.Mock).mock.calls[0][1];
-    expect(appendFileSyncCall).toContain('[REDACTED]');
+    expect(fs.appendFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('my-app.log'),
+      expect.stringContaining('[REDACTED]'),
+    );
   });
 
   it('should include correlation ID if present', async () => {
@@ -94,7 +132,9 @@ describe('LoggerMiddleware', () => {
 
     await middleware.use(request as Request, response as Response, next);
 
-    const appendFileSyncCall = (fs.appendFileSync as jest.Mock).mock.calls[0][1];
-    expect(appendFileSyncCall).toContain('test-correlation-id');
+    expect(fs.appendFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('my-app.log'),
+      expect.stringContaining('test-correlation-id'),
+    );
   });
 });

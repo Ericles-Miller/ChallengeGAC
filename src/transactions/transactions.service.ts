@@ -118,21 +118,25 @@ export class TransactionsService {
     }
   }
 
-  async findOne(id: string, senderId: string): Promise<Transaction> {
+  async findOne(id: string, userId: string): Promise<Transaction> {
     try {
       const transaction = await this.repository
         .createQueryBuilder('transaction')
         .leftJoinAndSelect('transaction.receiver', 'receiver')
+        .leftJoinAndSelect('transaction.sender', 'sender')
         .where('transaction.id = :id', { id })
-        .andWhere('transaction.senderId = :senderId', { senderId })
+        .andWhere('(transaction.senderId = :userId OR transaction.receiverId = :userId)', { userId })
         .select([
           'transaction.id',
           'transaction.amount',
           'transaction.status',
           'transaction.code',
           'transaction.createdAt',
+          'transaction.updatedAt',
           'receiver.id',
           'receiver.name',
+          'sender.id',
+          'sender.name',
         ])
         .getOne();
 
