@@ -6,9 +6,17 @@ import { ELoggerLevel } from './logger-level.enum';
 import * as fs from 'fs';
 import * as path from 'path';
 
+const LOG_DIR =
+  process.env.NODE_ENV === 'production' ? '/usr/src/app/logstash' : path.join(__dirname, '../../logstash');
+
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  constructor(private readonly customLogger: CustomLogger) {}
+  constructor(private readonly customLogger: CustomLogger) {
+    // Ensure log directory exists
+    if (!fs.existsSync(LOG_DIR)) {
+      fs.mkdirSync(LOG_DIR, { recursive: true });
+    }
+  }
 
   async use(request: Request, response: Response, next: NextFunction): Promise<void> {
     const { method, originalUrl, ip, body, query, params } = request;
@@ -66,7 +74,8 @@ export class LoggerMiddleware implements NestMiddleware {
         headers: this.sanitizeHeaders(request.headers),
       };
 
-      fs.appendFileSync(path.join(__dirname, '../../logstash/my-app.log'), JSON.stringify(logData) + '\n');
+      const logPath = path.join(LOG_DIR, 'my-app.log');
+      fs.appendFileSync(logPath, JSON.stringify(logData) + '\n');
 
       if (level === ELoggerLevel.ERROR) {
         this.customLogger.error(logMessage, 'HTTP');

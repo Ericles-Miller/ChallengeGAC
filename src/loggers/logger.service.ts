@@ -4,8 +4,17 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { TransactionReversal } from 'src/transactions/entities/transaction-reversal.entity';
 
+const LOG_DIR = process.env.NODE_ENV === 'production' ? '/usr/src/app/logstash' : path.join(__dirname, '../../logstash');
+
 @Injectable()
 export class LoggerService {
+  constructor() {
+    // Ensure log directory exists
+    if (!fs.existsSync(LOG_DIR)) {
+      fs.mkdirSync(LOG_DIR, { recursive: true });
+    }
+  }
+
   async sendTransactionAuditLog(transaction: Transaction): Promise<void> {
     const { amount, receiverId, senderId, status, id, createdAt, code } = transaction;
 
@@ -26,10 +35,8 @@ export class LoggerService {
       message: `Transaction ${id} created with amount ${amount} from ${senderId} to ${receiverId}`,
     };
 
-    fs.appendFileSync(
-      path.join(__dirname, '../../logstash/transaction-audit.log'),
-      JSON.stringify(logData) + '\n',
-    );
+    const logPath = path.join(LOG_DIR, 'transaction-audit.log');
+    fs.appendFileSync(logPath, JSON.stringify(logData) + '\n');
   }
 
   async sendTransactionReversalAuditLog(transactionReversal: TransactionReversal): Promise<void> {
@@ -48,9 +55,7 @@ export class LoggerService {
       message: `Transaction ${transactionId} reversed with amount ${amount}`,
     };
 
-    fs.appendFileSync(
-      path.join(__dirname, '../../logstash/transaction-reversal-audit.log'),
-      JSON.stringify(logData) + '\n',
-    );
+    const logPath = path.join(LOG_DIR, 'transaction-reversal-audit.log');
+    fs.appendFileSync(logPath, JSON.stringify(logData) + '\n');
   }
 }
